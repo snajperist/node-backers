@@ -253,7 +253,7 @@ module.exports = function(app) {
 			res.redirect('/');
 		}	else{
 			res.render('facebook', {
-				title : 'Schedule Facebook Posts',
+				title : 'Schedule Facebook',
 				udata : req.session.user
 			});
 		}
