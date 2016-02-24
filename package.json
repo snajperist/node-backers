@@ -1,14 +1,11 @@
 {
-	"name": "node-login",
-	"version": "1.4.1",
-	"description": "A template for quickly building login systems on top of Node.js & MongoDb",
-	"author": "Stephen Braitsch <stephen@braitsch.io>",
-	"website":{
-		"url": "http://node-login.braitsch.io"
-	},
+	"name": "node-backers",
+	"version": "1.0.0",
+	"description": "Building systems NodeJS & MongoDB",
+	"author": "Marin B",
 	"repository": {
 		"type": "git",
-		"url": "git@github.com:braitsch/node-login.git"
+		"url": "git@github.com:snajperist/node-backers.git"
 	},
 	"dependencies": {
 		"express": "4.13.3",

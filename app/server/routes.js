@@ -272,7 +272,7 @@ module.exports = function(app) {
 			user 	: req.body['user'],
 			pass	: req.body['pass'],
 			country : req.body['country'],
-			status 	: 'Inactive'
+			status 	: (req.body['user'] == 'admin' ? 'Admin' : 'Inactive')
 		}, function(e){
 			if (e){
 				res.status(400).send(e);
