@@ -1,0 +1,62 @@
+extends panel
+
+block content
+	form( method="post")#accounts-form.well
+		h1 Accounts Search
+		p#sub1.subheading Search inputs support partial match
+		input(type='hidden', name='type', value='search')
+		label User
+		input(type='text', name='user', id='user-tf')
+		label Name
+		input(type='text', name='name', id='name-tf')
+		label Email
+		input(type='text', name='email', id='email-tf')
+		label Location
+		input(type='text', name='country', id='country-tf' placeholder='e.g. United States')
+		div.clear-fix
+		button(type='submit')#accounts-form.btn.btn-primary
+			i.icon-search.icon-white
+			| Search
+	table#accounts_table.table-hover.no-footer.table-striped(style='width: 100%;')
+	br
+	form( method="post")#edit-form.well.span6.hidden
+		h1 Edit user
+		hr
+		input(type='hidden', name='type', value='update')
+		input(type='hidden', value='')#userId
+		label User
+		input(type='text', name='user', id='user-edit')
+		label Password
+		input(type='text', name='pass', value='', id='pass-edit')
+		label Name
+		input(type='text', name='name', id='name-edit')
+		label Status
+		select#status(name='status')
+			option(value='')
+			option(value='Admin') Admin
+			option(value='Active') Active
+			option(value='Inactive') Inactive
+		label Email
+		input(type='text', name='email', id='email-edit')
+		label.control-label(for='country-list') Location
+			select#country-list(name='country')
+				each item in countries
+					option= item.name
+		hr
+		.form-buttons
+			button(type='button' data-toggle='modal' data-target='#modal-confirm')#account-form-btn1.btn
+			button(type='submit' data-toggle='modal' data-target='#modal-alert')#account-form-btn2.btn
+	
+	
+	include modals/alert
+	include modals/confirm
+	include modals/form-errors
+block scripts
+	script(src='https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js')
+	script(src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js')
+	script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js')
+	script(src='/js/application.js')
+	script(src='/js/plugins.js')
+	script(src='/js/views/admin.js')
+	script(src='/js/controllers/adminController.js')
+	script(src='/js/jquery.dataTables.min.js')

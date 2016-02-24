@@ -5,13 +5,13 @@
 	* Copyright (c) 2013-2015 Stephen Braitsch
 **/
 
-var http = require('http');
-var express = require('express');
-var session = require('express-session');
-var bodyParser = require('body-parser');
-var errorHandler = require('errorhandler');
-var cookieParser = require('cookie-parser');
-var MongoStore = require('connect-mongo')(session);
+var http 			= require('http');
+var express 		= require('express');
+var session 		= require('express-session');
+var bodyParser 		= require('body-parser');
+var errorHandler 	= require('errorhandler');
+var cookieParser 	= require('cookie-parser');
+var MongoStore 		= require('connect-mongo')(session);
 
 var app = express();
 

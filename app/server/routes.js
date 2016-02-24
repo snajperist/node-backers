@@ -1,4 +1,3 @@
-
 var CT = require('./modules/country-list');
 var AM = require('./modules/account-manager');
 var EM = require('./modules/email-dispatcher');
@@ -16,7 +15,7 @@ module.exports = function(app) {
 			AM.autoLogin(req.cookies.user, req.cookies.pass, function(o){
 				if (o != null){
 				    req.session.user = o;
-					res.redirect('/home');
+					res.redirect('/dashboard');
 				}	else{
 					res.render('login', { title: 'Hello - Please Login To Your Account' });
 				}
@@ -38,15 +37,102 @@ module.exports = function(app) {
 			}
 		});
 	});
-	
+
+
 // logged-in user homepage //
 	
-	app.get('/home', function(req, res) {
+	app.get('/dashboard', function(req, res) {
 		if (req.session.user == null){
 	// if user is not logged-in redirect back to login page //
 			res.redirect('/');
 		}	else{
-			res.render('home', {
+			res.render('dashboard', {
+				title : 'Dashboard',
+				countries : CT,
+				udata : req.session.user
+			});
+		}
+	});
+	
+	app.post('/dashboard', function(req, res){
+		if (req.body['user'] != undefined) {
+			AM.updateAccount({
+				user 	: req.body['user'],
+				name 	: req.body['name'],
+				email 	: req.body['email'],
+				country : req.body['country']
+			}, function(e, o){
+				if (e){
+					res.status(400).send('error-updating-account');
+				}	else{
+					req.session.user = o;
+			// update the user's login cookies if they exists //
+					if (req.cookies.user != undefined && req.cookies.pass != undefined){
+						res.cookie('user', o.user, { maxAge: 900000 });
+						res.cookie('pass', o.pass, { maxAge: 900000 });	
+					}
+					res.status(200).send('ok');
+				}
+			});
+		}	else if (req.body['logout'] == 'true'){
+			res.clearCookie('user');
+			res.clearCookie('pass');
+			req.session.destroy(function(e){ res.status(200).send('ok'); });
+		}
+	});
+	
+
+// admin panel
+	app.get('/admin', function(req, res) {
+		if (req.session.user != null && req.session.user['status'] == 'Admin') {
+			res.render('admin', {
+				title : 'Admin',
+				countries : CT,
+				udata : req.session.user
+			});
+		}
+	});
+	
+	
+// admin panel get users
+	app.post('/admin', function(req, res) {
+		if(req.session.user != null && req.session.user['status'] == 'Admin') {
+			if(req.body['type'] == 'search')
+				AM.returnAllAccounts( { user:req.body['user'], name:req.body['name'], email:req.body['email'], country:req.body['country'] }, function(e, o){
+				if (!o){
+					res.status(400).send(e);
+				}	else{
+					res.send(o);
+				}
+			});
+			else if(req.body['type'] == 'update') {
+				AM.adminUpdateAccount({
+					user 	: req.body['user'],
+					name 	: req.body['name'],
+					email 	: req.body['email'],
+					pass	: req.body['pass'],
+					country : req.body['country'],
+					status 	: req.body['status']
+				}, function(e, o){
+					if (e)
+						res.status(400).send('error-updating-account');
+					else
+						res.status(200).send('ok');
+				});
+			}
+		}
+	});
+
+
+	
+// logged-in user settings page //
+	
+	app.get('/settings', function(req, res) {
+		if (req.session.user == null){
+	// if user is not logged-in redirect back to login page //
+			res.redirect('/');
+		}	else{
+			res.render('settings', {
 				title : 'Control Panel',
 				countries : CT,
 				udata : req.session.user
@@ -54,7 +140,7 @@ module.exports = function(app) {
 		}
 	});
 	
-	app.post('/home', function(req, res){
+	app.post('/settings', function(req, res){
 		if (req.body['user'] != undefined) {
 			AM.updateAccount({
 				user 	: req.body['user'],
@@ -81,6 +167,97 @@ module.exports = function(app) {
 			req.session.destroy(function(e){ res.status(200).send('ok'); });
 		}
 	});
+
+
+	
+// logout
+	app.get('/logout', function(req, res) {
+		res.clearCookie('user');
+		res.clearCookie('pass');
+		req.session.destroy();
+		res.redirect('/');
+	});
+
+	
+// logged-in user backer search //
+	
+	app.get('/backers', function(req, res) {
+		if (req.session.user == null) {
+	// if user is not logged-in redirect back to login page //
+			res.redirect('/');
+		}	else{
+			res.render('backers', {
+				title : 'Backers Search',
+				udata : req.session.user
+			});
+		}
+	});
+	
+	app.post('/backers', function(req, res) {
+		AM.returnAllBackers( { platform:req.body.platform[0], category:req.body.category[0], location:req.body['location'], backed:req.body['backed'], limit:(req.session.user['status'] == 'Admin' || req.session.user['status'] == 'Active' ? 1000 : 5)}, function(e, o){
+			if (!o){
+				res.status(400).send(e);
+			}	else{
+				res.send(o);
+			}
+		})
+	});
+
+	
+// save backers 
+	app.post('/savebackers', function(req, res) {
+		AM.saveBackers(req.body, function(e, o){
+			if (!o){
+				res.status(400).send(e);
+			}	else{
+				res.send(o);
+			}
+		})
+	});
+	
+	
+	// save backers 
+	app.post('/backersCount', function(req, res) {
+		AM.backersCount(function(e, o){
+			if (e){
+				console.log('e ' + e + '\t' + o);
+				res.sendStatus(e);
+			}	else{
+				console.log('o ' + e + '\t' + o);
+				res.send(o);
+			}
+		})
+	});
+	
+	
+	
+// prediction 
+	app.get('/prediction', function(req, res) {
+		if (req.session.user == null) {
+	// if user is not logged-in redirect back to login page //
+			res.redirect('/');
+		}	else{
+			res.render('prediction', {
+				title : 'Campaign Success Prediction',
+				udata : req.session.user
+			});
+		}
+	});
+	
+	
+	
+// delete backers 
+	app.get('/deletebackers', function(req, res) {
+		AM.deleteBackers(function(e, o){
+			if (!o){
+				res.send(e);
+			}	else{
+				res.send(o);
+			}
+		})
+	});
+	
+	
 	
 // creating new accounts //
 	
@@ -94,7 +271,8 @@ module.exports = function(app) {
 			email 	: req.body['email'],
 			user 	: req.body['user'],
 			pass	: req.body['pass'],
-			country : req.body['country']
+			country : req.body['country'],
+			status 	: 'Inactive'
 		}, function(e){
 			if (e){
 				res.status(400).send(e);
@@ -165,13 +343,14 @@ module.exports = function(app) {
 	
 	app.post('/delete', function(req, res){
 		AM.deleteAccount(req.body.id, function(e, obj){
-			if (!e){
+			if (!e && req.session.user['status'] != 'Admin'){
 				res.clearCookie('user');
 				res.clearCookie('pass');
 				req.session.destroy(function(e){ res.status(200).send('ok'); });
-			}	else{
+			} else if(req.session.user['status'] == 'Admin')
+				res.status(200).send('ok');
+			else
 				res.status(400).send('record not found');
-			}
 	    });
 	});
 	

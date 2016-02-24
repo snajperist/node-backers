@@ -1,0 +1,24 @@
+
+extends layout
+
+block content
+
+	#login-container
+		form( method="post")#backers-form.well
+			h1 Backers Search
+			p.subheading Use form to perform search
+			label Name 
+			input(type="text", name="name", id='name-tf')
+			label Location
+			input(type="text", name="location", id='location-tf' placeholder='e.g. United States')
+			label Backed 
+			input(type="text", name="backed", id='backed-tf' placeholder='min')
+			div.clear-fix
+			button(type="submit")#backers-form.btn.btn-primary
+				i.icon-search.icon-white
+				| Search
+			hr
+	table#target_table_id.table-responsive.table-bordered.table-striped.table-hover
+	hr
+	hr
+	hr

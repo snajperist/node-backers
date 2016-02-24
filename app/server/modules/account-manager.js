@@ -18,15 +18,19 @@ var db = new MongoDB(dbName, new Server(dbHost, dbPort, {auto_reconnect: true}),
 		console.log('connected to database :: ' + dbName);
 	}
 });
-var accounts = db.collection('accounts');
+var accounts 	= db.collection('accounts');
+var backers 	= db.collection('backers');
 
 /* login validation methods */
 
 exports.autoLogin = function(user, pass, callback)
 {
 	accounts.findOne({user:user}, function(e, o) {
-		if (o){
-			o.pass == pass ? callback(o) : callback(null);
+		if (o && o.pass == pass){
+			backersCount(function(n) {
+				o.backersCount = n;
+				callback(o);
+			});
 		}	else{
 			callback(null);
 		}
@@ -41,7 +45,10 @@ exports.manualLogin = function(user, pass, callback)
 		}	else{
 			validatePassword(pass, o.pass, function(err, res) {
 				if (res){
-					callback(null, o);
+					backersCount(function(n) {
+						o.backersCount = n;
+						callback(null, o);
+					});
 				}	else{
 					callback('invalid-password');
 				}
@@ -76,10 +83,34 @@ exports.addNewAccount = function(newData, callback)
 
 exports.updateAccount = function(newData, callback)
 {
-	accounts.findOne({user:newData.user}, function(e, o){
+	accounts.findOne({user:newData.user}, function(e, o) {
 		o.name 		= newData.name;
 		o.email 	= newData.email;
 		o.country 	= newData.country;
+		if (newData.pass == ''){
+			accounts.save(o, {safe: true}, function(err) {
+				if (err) callback(err);
+				else callback(null, o);
+			});
+		}	else{
+			saltAndHash(newData.pass, function(hash){
+				o.pass = hash;
+				accounts.save(o, {safe: true}, function(err) {
+					if (err) callback(err);
+					else callback(null, o);
+				});
+			});
+		}
+	});
+}
+
+exports.adminUpdateAccount = function(newData, callback)
+{
+	accounts.findOne({user:newData.user}, function(e, o) {
+		o.name 		= newData.name;
+		o.email 	= newData.email;
+		o.country 	= newData.country;
+		o.status 	= newData.status;
 		if (newData.pass == ''){
 			accounts.save(o, {safe: true}, function(err) {
 				if (err) callback(err);
@@ -174,6 +205,17 @@ var validatePassword = function(plainPass, hashedPass, callback)
 	callback(null, hashedPass === validHash);
 }
 
+exports.returnAllAccounts = function(q, callback)
+{
+	accounts.find( { user:{'$regex':q.user}, name:{'$regex':q.name}, email:{'$regex':q.email}, country:{'$regex':q.country} } ).limit(1250).toArray(function(e, o) {
+	    if(e)
+	      callback(e, null);
+	    else {
+	      callback(null, o);
+	    }
+    });
+}
+
 /* auxiliary methods */
 
 var getObjectId = function(id)
@@ -199,4 +241,89 @@ var findByMultipleFields = function(a, callback)
 		if (e) callback(e)
 		else callback(null, results)
 	});
+}
+
+
+
+/* type check */
+function isType(type, obj) {
+    var clas = Object.prototype.toString.call(obj).slice(8, -1);
+    return obj !== undefined && obj !== null && clas === type;
+}
+
+
+
+/* backers database methods */
+
+
+exports.returnAllBackers = function(q, callback)
+{
+	backers.find( { url:{'$regex':q.platform}, category:{'$regex':q.category}, location:{'$regex':q.location}, backed:{$gt:(q.backed == '' ? 0 : parseInt(q.backed))} }, { _id: 0 } ).limit(q.limit).toArray(function(e, o) {
+	    if(e)
+	      callback(e, null);
+	    else
+	      callback(null, o);
+    });
+}
+
+
+exports.saveBackers = function(bs, callback)
+{
+	if(isType('Array', bs) && bs.length > 0 && isType('Object', bs[0])) {
+		var total 		= 0;
+		var nMatched 	= 0;
+		var nUpserted 	= 0;
+		var nModified 	= 0;
+		bs.forEach(function(b) {
+			backers.find({ url: b.url }).toArray(function(e, o) {
+			    if(e)
+			      callback(e, null);
+			    else {
+			    	if(o.length > 0) {
+			    		if(o[0].category.indexOf(b.category[0]) == -1)
+				    		o[0].category.push(b.category[0]);
+				    	b.category = o[0].category;
+			    	}
+
+				    backers.update({ url: b.url }, b, { upsert: true }, function (e, result) {
+						total++;
+						if(e) {
+							callback(e, null);
+						}
+						else {
+							/*nMatched 	+= parseInt(result.nMatched);
+							nUpserted 	+= parseInt(result.nUpserted);
+							nModified 	+= parseInt(result.nModified);*/
+						}
+						if(total == bs.length)
+							callback(null, 'Updated ' + bs.length + ' documents');
+							//callback(null, 'Inserted ' + bs.length + ' documents\nnMatched' + nMatched + '\nnUpserted' + nUpserted + '\nnModified' + nModified);
+					});
+			    }
+		    });
+		});
+	}
+	else
+		callback('Error saving', null);
+}
+
+
+exports.deleteBackers = function(callback)
+{
+	backers.drop(function(e, reply) {
+		if(e)
+			callback('Error deleting collection\n' + e);
+		else
+			callback('Collection deleting ' + reply);
+    });
+}
+
+
+var backersCount = function(callback) {
+	backers.count({}, function(e, reply) {
+		if(e)
+			callback(0);
+		else
+			callback(reply);
+    });
 }

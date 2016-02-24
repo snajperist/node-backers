@@ -1,0 +1,160 @@
+// preset form values if we receive a userdata object //
+- user = typeof(udata) != 'undefined' ? udata : { }
+
+doctype html
+html(lang='en')
+  head
+    meta(charset='utf-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0, maximum-scale=1.0')
+    meta(name='description', content='admin-themes-lab')
+    meta(name='author', content='themes-lab')
+    link(rel='shortcut icon', href='/image/favicon.png', type='image/png')
+    title Make Admin Template - Themes Lab
+    link(href='/css/panel.css', rel='stylesheet')
+    // MANDATORY
+  body.fixed-topbar.color-default.sidebar-condensed.submenu-hover.theme-sdtd
+    #modal-alert.modal.fade(role='dialog')
+      .modal-dialog
+        .modal-content
+          .modal-header
+            button.close(type='button', data-dismiss='modal') ×
+            h4.modal-title
+          .modal-body
+            p
+          .modal-footer(style='background-color: #f5f5f5; border-top: 1px solid #ddd;')
+            button.btn.btn-warning(type='button', data-dismiss='modal') Close
+    #modal-confirm.modal.fade(role='dialog')
+      .modal-dialog
+        .modal-content
+          .modal-header
+            button.close(type='button', data-dismiss='modal') ×
+            h4.modal-title
+          .modal-body
+            p
+          .modal-footer(style='background-color: #f5f5f5; border-top: 1px solid #ddd;')
+            button.btn(type='button', data-dismiss='modal') Close
+            button#confirm-delete.btn.btn-danger(type='button', data-dismiss='modal')
+    section
+      // BEGIN SIDEBAR
+      .sidebar
+        .logopanel
+          h1
+            a(href='dashboard')  
+              img(src='/image/logo.png')
+        .sidebar-inner
+          .sidebar-top.small-img.clearfix
+            .user-image
+              img.img-responsive.img-circle(src='/image/default.jpg')
+            .user-details
+              h4= user.name
+              .dropdown.user-login
+                button.btn.btn-xs.dropdown-toggle.btn-rounded(type='button', data-toggle='dropdown', data-hover='dropdown', data-close-others='true', data-delay='300')
+                  if user.status == 'Admin'
+                    i#status_icon.busy
+                  else if user.status == 'Active'
+                    i#status_icon.online
+                  else
+                    i#status_icon.away
+                  span#status_text= user.status
+          ul.nav.nav-sidebar
+            li.tm.nav
+              a(href='dashboard')
+                i.icon-home
+                span Dashboard
+            li.tm.nav
+              a(href='backers')
+                i.icon-rocket
+                span Backers
+            li.tm.nav
+              a(href='prediction')
+                i.icon-chemistry
+                span Prediction
+            li.tm.nav
+              a(href='#')
+                i.icon-social-facebook
+                span Automate
+            li.tm.nav-parent
+              a(href='settings')
+                i.icon-user
+                span My Account
+                span.fa.arrow
+              ul.children.collapse
+                li
+                  a(href='settings') Settings
+                li
+                  a.logout(href='#', data-toggle='modal', data-target='#modal-alert') Logout
+            li.tm.nav
+              a(href='contact')
+                i.icon-envelope
+                span Contact
+            if user.status == 'Admin'
+              li.tm.nav
+                a(href='admin')
+                  i.icon-ghost
+                  span Admin
+          .sidebar-widgets(style='margin-bottom: 20px;')
+          .sidebar-footer.clearfix(style='')
+            a.pull-left.footer-settings(href='settings', data-rel='tooltip', data-placement='top', data-original-title='Settings')
+              i.icon-settings
+            a.pull-left.toggle_fullscreen(href='#', data-rel='tooltip', data-placement='top', data-original-title='Fullscreen')
+              i.icon-size-fullscreen
+            a.pull-left(href='contact', data-rel='tooltip', data-placement='top', data-original-title='Contact')
+              i.icon-envelope
+            a.btn-logout.logout.pull-left.btn-effect(href='#', data-toggle='modal', data-target='#modal-alert', data-rel='tooltip', data-placement='top', data-original-title='Logout')
+              i.icon-power
+      // END SIDEBAR
+      .main-content
+        // BEGIN TOPBAR
+        .topbar
+          .header-right
+            ul.header-menu.nav.navbar-nav
+              li
+                a(href='dashboard')
+                  i.icon-bar-chart(style='padding: 1px 7px 0 0')
+                  span Dashboard
+              li
+                a(href='backers')
+                  span.pull-right.badge.badge-primary(id='backersNumber' style='margin: 2px 0 0 -35px; padding: 2px 4px; font-size: 11px;')= user.backersCount
+                  i.fa.fa-search(style='padding: 3px 4px 0 0')
+                  span(style='padding-left: 5px') Backers
+              li
+                a(href='settings')
+                  i.icon-settings(style='padding: 1px 3px 0 0')
+                  span(style='padding-left: 5px') Settings
+              li
+                a.logout(href='#', data-toggle='modal', data-target='#modal-alert')
+                  i.icon-logout(style='padding: 1px 3px 0 0')
+                  span(style='padding-left: 5px') Logout
+        // END TOPBAR
+        // BEGIN PAGE CONTENT
+        .page-content
+          block content
+          .footer
+            .copyright
+              p.pull-left.sm-pull-reset
+                span
+                  | Copyright 
+                  span.copyright ©
+                  |  2016
+                span THEMES LAB
+                | . 
+                span All rights reserved. 
+              p.pull-right.sm-pull-reset
+                span
+                  a.m-r-10(href='#') Support
+                  |  
+                  a.m-l-10.m-r-10(href='#') Terms of use
+                  |  
+                  a.m-l-10(href='#') Privacy Policy
+        // END PAGE CONTENT
+      // END MAIN CONTENT
+    // Preloader
+    .modal-backdrop(style='opacity: 0.5; visibility: hidden;')
+    .loader-overlay
+      .spinner
+        .bounce1
+        .bounce2
+        .bounce3
+    a.scrollup(href='#')
+      i.fa.fa-angle-up
+block scripts

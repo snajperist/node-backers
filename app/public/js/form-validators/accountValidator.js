@@ -40,7 +40,25 @@ function AccountValidator(){
 		for (var i=0; i < a.length; i++) ul.append('<li>'+a[i]+'</li>');
 		this.alert.modal('show');
 	}
-
+	
+	
+	this.attemptLogout = function()
+	{
+		var that = this;
+		$.ajax({
+			url: "/logout",
+			type: "POST",
+			data: {logout : true},
+			success: function(data){
+				$('#modal-alert h4').text('Logged out');
+				$('#modal-alert .modal-body p').html('You are now logged out.<br>Redirecting you back to the homepage.');
+	 			//that.showLockedAlert();
+			},
+			error: function(jqXHR){
+				console.log(jqXHR.responseText+' :: '+jqXHR.statusText);
+			}
+		});
+	}
 }
 
 AccountValidator.prototype.showInvalidEmail = function()
