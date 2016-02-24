@@ -246,6 +246,21 @@ module.exports = function(app) {
 	
 	
 	
+// prediction 
+	app.get('/facebook', function(req, res) {
+		if (req.session.user == null) {
+	// if user is not logged-in redirect back to login page //
+			res.redirect('/');
+		}	else{
+			res.render('facebook', {
+				title : 'Schedule Facebook Posts',
+				udata : req.session.user
+			});
+		}
+	});
+	
+	
+	
 // delete backers 
 	app.get('/deletebackers', function(req, res) {
 		AM.deleteBackers(function(e, o){
