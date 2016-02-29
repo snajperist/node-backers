@@ -1,9 +1,13 @@
 - user = typeof(udata) != 'undefined' ? udata : { }
+- title = typeof(title) != 'undefined' ? title : 'Backers Directory'
 
 doctype html
 html
 	head
-		title Backers Directory
+		title= title
+		meta(name='description', content='BackersLab CrowdFunding Backers Search')
+		meta(name='author', content='BackersLab')
+		link(rel='shortcut icon', href='/image/favicon.png', type='image/png')
 		link(rel='stylesheet', href='/vendor/bootstrap.min.css')
 		link(rel='stylesheet', href='/css/style.css')
 	body

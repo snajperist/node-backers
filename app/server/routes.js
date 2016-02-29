@@ -4,12 +4,20 @@ var EM = require('./modules/email-dispatcher');
 
 module.exports = function(app) {
 
-// main login page //
-
-	app.get('/', function(req, res){
+// main page //
+	app.get('/', function(req, res) {
+		if (req.session.user == null)
+			res.render('index');
+		else
+			res.redirect('/');
+	});
+	
+	
+// login page //
+	app.get('/login', function(req, res){
 	// check if the user's credentials are saved in a cookie //
 		if (req.cookies.user == undefined || req.cookies.pass == undefined){
-			res.render('login', { title: 'Hello - Please Login To Your Account' });
+			res.render('login', { title: 'Login To BackersLab' });
 		}	else{
 	// attempt automatic login //
 			AM.autoLogin(req.cookies.user, req.cookies.pass, function(o){
@@ -17,13 +25,13 @@ module.exports = function(app) {
 				    req.session.user = o;
 					res.redirect('/dashboard');
 				}	else{
-					res.render('login', { title: 'Hello - Please Login To Your Account' });
+					res.render('login', { title: 'Login To BackersLab' });
 				}
 			});
 		}
 	});
 	
-	app.post('/', function(req, res){
+	app.post('/login', function(req, res){
 		AM.manualLogin(req.body['user'], req.body['pass'], function(e, o){
 			if (!o){
 				res.status(400).send(e);
@@ -133,7 +141,7 @@ module.exports = function(app) {
 			res.redirect('/');
 		}	else{
 			res.render('settings', {
-				title : 'Control Panel',
+				title : 'Settings',
 				countries : CT,
 				udata : req.session.user
 			});
@@ -260,16 +268,47 @@ module.exports = function(app) {
 	});
 	
 	
+
+// prediction 
+	app.get('/contact', function(req, res) {
+		if (req.session.user == null) {
+	// if user is not logged-in redirect back to login page //
+			res.redirect('/');
+		}	else{
+			res.render('contact', {
+				title : 'Contact Us',
+				udata : req.session.user
+			});
+		}
+	});
+	
+	
+	
+	// prediction 
+	app.get('/privacy', function(req, res) {
+		if (req.session.user == null) {
+	// if user is not logged-in redirect back to login page //
+			res.redirect('/');
+		}	else{
+			res.render('privacy', {
+				title : 'Privacy Policy',
+				udata : req.session.user
+			});
+		}
+	});
+	
+	
 	
 // delete backers 
 	app.get('/deletebackers', function(req, res) {
-		AM.deleteBackers(function(e, o){
-			if (!o){
-				res.send(e);
-			}	else{
-				res.send(o);
-			}
-		})
+		if(req.session.user != null && req.session.user['status'] == 'Admin')
+			AM.deleteBackers(function(e, o){
+				if (!o){
+					res.send(e);
+				}	else{
+					res.send(o);
+				}
+			})
 	});
 	
 	
@@ -277,7 +316,7 @@ module.exports = function(app) {
 // creating new accounts //
 	
 	app.get('/signup', function(req, res) {
-		res.render('signup', {  title: 'Signup', countries : CT });
+		res.render('signup', {  title: 'Register', countries : CT });
 	});
 	
 	app.post('/signup', function(req, res){

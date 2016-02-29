@@ -1,15 +1,16 @@
 // preset form values if we receive a userdata object //
 - user = typeof(udata) != 'undefined' ? udata : { }
+- title = typeof(title) != 'undefined' ? title : 'Backers Directory'
 
 doctype html
 html(lang='en')
   head
     meta(charset='utf-8')
     meta(name='viewport', content='width=device-width, initial-scale=1.0, maximum-scale=1.0')
-    meta(name='description', content='admin-themes-lab')
-    meta(name='author', content='themes-lab')
+    meta(name='description', content='BackersLab CrowdFunding Backers Search')
+    meta(name='author', content='BackersLab')
     link(rel='shortcut icon', href='/image/favicon.png', type='image/png')
-    title Make Admin Template - Themes Lab
+    title= title
     link(href='/css/panel.css', rel='stylesheet')
     // MANDATORY
   body.fixed-topbar.color-default.sidebar-condensed.submenu-hover.theme-sdtd
@@ -136,16 +137,14 @@ html(lang='en')
                   | Copyright 
                   span.copyright ©
                   |  2016
-                span THEMES LAB
+                span  BACKERS LAB
                 | . 
                 span All rights reserved. 
               p.pull-right.sm-pull-reset
                 span
-                  a.m-r-10(href='#') Support
+                  a.m-r-10(href='contact') Support
                   |  
-                  a.m-l-10.m-r-10(href='#') Terms of use
-                  |  
-                  a.m-l-10(href='#') Privacy Policy
+                  a.m-l-10(href='privacy') Privacy Policy
         // END PAGE CONTENT
       // END MAIN CONTENT
     // Preloader
