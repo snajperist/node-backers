@@ -21,7 +21,7 @@ function AccountValidator(){
 
 AccountValidator.prototype.validateForm = function()
 {
-	if ($('#name-tf').val() == undefined || $('#name-tf').val().length < 4){
+	if ($('#name-tf').val() == undefined || $('#name-tf').val().length < 2){
 		this.showSignupError('Whoops!', 'Please enter a valid name');
 		return false;
 	}	else if ($('#pass-tf').val() == undefined || $('#pass-tf').val().length < 6){

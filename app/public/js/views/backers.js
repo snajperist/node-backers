@@ -11,6 +11,7 @@ $(document).ready(function(){
 			if (bv.validateForm() == false){
 				return false;
 			} 	else{
+				$('.spinner2').show();
 				return true;
 			}
 		},
@@ -64,8 +65,10 @@ $(document).ready(function(){
 			        bFilter: false
 			    } );
 			}
+			$('.spinner2').hide();
 		},
 		error : function(e){
+			$('.spinner2').hide();
 			bv.showBackersError('Search Failure', 'Please check search inputs');
 		}
 	}); 
