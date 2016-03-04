@@ -1,0 +1,13 @@
+.btn-warning {
+  background-color: #ff9122;
+  color: #fff;
+}
+
+.modal-header .modal-title {
+    font-size: 15px;
+}
+
+.modal-title {
+    margin: 0;
+    line-height: 1.61803399;
+}
