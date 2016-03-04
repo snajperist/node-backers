@@ -6,10 +6,7 @@ module.exports = function(app) {
 
 // main page //
 	app.get('/', function(req, res) {
-		if (req.session.user == null)
-			res.render('index');
-		else
-			res.redirect('/');
+		res.render('index');
 	});
 	
 	
@@ -37,11 +34,9 @@ module.exports = function(app) {
 				res.status(400).send(e);
 			}	else{
 				req.session.user = o;
-				if (req.body['remember-me'] == 'true'){
-					res.cookie('user', o.user, { maxAge: 900000 });
-					res.cookie('pass', o.pass, { maxAge: 900000 });
-				}
-				res.status(200).send(o);
+				res.cookie('user', o.user, { maxAge: 900000 });
+				res.cookie('pass', o.pass, { maxAge: 900000 });
+				res.redirect('/dashboard');
 			}
 		});
 	});
@@ -269,7 +264,7 @@ module.exports = function(app) {
 	
 	
 
-// prediction 
+// contact 
 	app.get('/contact', function(req, res) {
 		if (req.session.user == null) {
 	// if user is not logged-in redirect back to login page //
@@ -284,7 +279,7 @@ module.exports = function(app) {
 	
 	
 	
-	// prediction 
+	// privacy 
 	app.get('/privacy', function(req, res) {
 		if (req.session.user == null) {
 	// if user is not logged-in redirect back to login page //
@@ -296,21 +291,7 @@ module.exports = function(app) {
 			});
 		}
 	});
-	
-	
-	
-// delete backers 
-	app.get('/deletebackers', function(req, res) {
-		if(req.session.user != null && req.session.user['status'] == 'Admin')
-			AM.deleteBackers(function(e, o){
-				if (!o){
-					res.send(e);
-				}	else{
-					res.send(o);
-				}
-			})
-	});
-	
+
 	
 	
 // creating new accounts //
