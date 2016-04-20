@@ -46,7 +46,7 @@ block content
 		input(type='text', name='backed', id='backed-tf' placeholder='minimum, e.g. 5')
 		div.clear-fix
 		button(type='submit')#backers-form.btn.btn-primary
-			i.icon-search.icon-white
+			i.icon-search.icon-magnifier(style='padding-right: 5px;')
 			| Search
 		.spinner2(style='display: none;')
 			.bounce1
@@ -65,6 +65,5 @@ block scripts
 	script(src='/js/application.js')
 	script(src='/js/plugins.js')
 	script(src='/js/views/backers.js')
-	script(src='/js/controllers/backersController.js')
 	script(src='/js/form-validators/backersValidator.js')
 	script(src='/js/jquery.dataTables.min.js')

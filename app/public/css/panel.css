@@ -25565,7 +25565,21 @@ textarea.parsley-error {
   padding: 4px;
 }
 
-#backers_table th {
+#journalists_table th {
+  text-transform: uppercase;
+  padding-bottom: 8px;
+  border-bottom: 2px solid #bbb;
+}
+
+#journalists-form select, input {
+  margin-right: 25px;
+}
+
+#journalists-form label {
+  margin-right: 5px;
+}
+
+#journalists_table th {
   text-transform: uppercase;
   padding-bottom: 8px;
   border-bottom: 2px solid #bbb;

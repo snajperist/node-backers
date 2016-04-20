@@ -64,16 +64,28 @@ html(lang='en')
                 span Dashboard
             li.tm.nav
               a(href='backers')
-                i.icon-rocket
+                i.icon-people
                 span Backers
-            li.tm.nav
-              a(href='prediction')
-                i.icon-chemistry
-                span Prediction
-            li.tm.nav
-              a(href='facebook')
-                i.icon-social-facebook
-                span Automate
+            li.tm.nav-parent
+              a(href='journalists')
+                i.icon-speech
+                span Journalists
+                span.fa.arrow
+              ul.children.collapse
+                li
+                  a(href='journalists') Search
+                li
+                  a.logout(href='contact-journalists') Saved Contacts
+            li.tm.nav-parent
+              a(href='outlets')
+                i.icon-book-open
+                span Outlets
+                span.fa.arrow
+              ul.children.collapse
+                li
+                  a(href='outlets') Search
+                li
+                  a.logout(href='contact-outlets') Saved Contacts
             li.tm.nav-parent
               a(href='settings')
                 i.icon-user
@@ -82,6 +94,8 @@ html(lang='en')
               ul.children.collapse
                 li
                   a(href='settings') Settings
+                li
+                  a(href='credits') Credits
                 li
                   a.logout(href='#', data-toggle='modal', data-target='#modal-alert') Logout
             li.tm.nav
@@ -119,9 +133,10 @@ html(lang='en')
                   i.fa.fa-search(style='padding: 3px 4px 0 0')
                   span(style='padding-left: 5px') Backers
               li
-                a(href='settings')
-                  i.icon-settings(style='padding: 1px 3px 0 0')
-                  span(style='padding-left: 5px') Settings
+                a(href='journalists')
+                  span.pull-right.badge.badge-primary(id='journalistsNumber' style='margin: 2px 0 0 -35px; padding: 2px 4px; font-size: 11px;')= user.journalistsCount
+                  i.fa.fa-globe(style='padding: 3px 4px 0 0')
+                  span(style='padding-left: 5px') Journalists
               li
                 a.logout(href='#', data-toggle='modal', data-target='#modal-alert')
                   i.icon-logout(style='padding: 1px 3px 0 0')

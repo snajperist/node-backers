@@ -11,7 +11,7 @@ $(document).ready(function(){
 		},
 		success	: function(responseText, status, xhr, $form){
 			if (status == 'success') { 
-				var tbl_thead = '<thead><tr><th>User</th><th>   </th><th>Name</th><th>Email</th><th>Country</th><th>Date Registered</th><th>ID (Edit)</th></tr></thead>';
+				var tbl_thead = '<thead><tr><th>User</th><th></th><th>Name</th><th>Email</th><th>Credits</th><th>Country</th><th>Date Registered</th><th>ID (Edit)</th></tr></thead>';
 				var tbl_body = document.createElement("tbody");
 		    	var odd_even = false;
 		    	$.each(responseText, function() {
@@ -38,6 +38,9 @@ $(document).ready(function(){
     		
 	        		cell = tbl_row.insertCell();
 	        		cell.innerHTML = this['email'].toString();
+	        		
+	        		cell = tbl_row.insertCell();
+	        		cell.innerHTML = (this['credits'] != undefined ? this['credits'].toString() : '-');
 	        		
 	        		cell = tbl_row.insertCell();
 	        		cell.innerHTML = this['country'].toString();
@@ -76,8 +79,9 @@ $(document).ready(function(){
 						$('#status').val('');
 					$('#name-edit').val(columns.eq(2).text());
 					$('#email-edit').val(columns.eq(3).text());
-					$('#country-list').val(columns.eq(4).text());
-					$('#userId').val(columns.eq(6).text());
+					$('#credits-edit').val(columns.eq(4).text());
+					$('#country-list').val(columns.eq(5).text());
+					$('#userId').val(columns.eq(7).text());
 				});
 			}
 		},

@@ -2,7 +2,6 @@
 $(document).ready(function(){
 	
 	var bv = new BackersValidator();
-	var bc = new BackersController();
 
 // main login form //
 
@@ -17,7 +16,7 @@ $(document).ready(function(){
 		},
 		success	: function(responseText, status, xhr, $form){
 			if (status == 'success') { 
-				var tbl_thead = '<thead><tr><th>Name</th><th>Platform</th><th>Category</th><th>Location</th><th>Backed</th><th>Facebook</th><th>Twitter</th></tr></thead>';
+				var tbl_thead = '<thead><tr><th>Name</th><th></th><th>Platform</th><th>Category</th><th>Location</th><th>Backed</th><th>Facebook</th><th>Twitter</th></tr></thead>';
 				var tbl_body = document.createElement("tbody");
 		    	var odd_even = false;
 		    	$.each(responseText, function() {
@@ -25,6 +24,9 @@ $(document).ready(function(){
 		        	tbl_row.className = odd_even ? "odd" : "even";
 
 	        		var cell = tbl_row.insertCell();
+	        		cell.innerHTML = '<img src="' + this['twitter'].toString() + '/profile_image?size=mini" onerror="this.src=\'/image/twitter-default.png\'">';
+	        		
+	        		cell = tbl_row.insertCell();
 	        		cell.innerHTML = this['name'].toString().substring(0,30) + (this['name'].toString().length >= 30 ? '... ' : '');
 	        		
 	        		cell = tbl_row.insertCell();

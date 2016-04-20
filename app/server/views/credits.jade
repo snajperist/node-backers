@@ -1,14 +1,16 @@
-
 extends panel
 
 block content
 	div.well
 		div.row
+			h1 Credits
+			p#sub1.subheading
+			span You have 
+			span= user.credits
+			span  credits in your account balance
 			hr
 			div.col-sm-4.col-sm-offset-5
-				a(href='settings') Settings
-			div.col-sm-4.col-sm-offset-5
-				a(href='backers') Backers
+				a(href='https://www.paypal.com') Paypal
 	
 	include modals/alert
 	include modals/confirm
@@ -19,6 +21,3 @@ block scripts
 	script(src='https://cdnjs.cloudflare.com/ajax/libs/jquery.form/3.51/jquery.form.min.js')
 	script(src='/js/application.js')
 	script(src='/js/plugins.js')
-	script(src='/js/views/dashboard.js')
-	script(src='/js/controllers/dashboardController.js')
-	script(src='/js/form-validators/accountValidator.js')

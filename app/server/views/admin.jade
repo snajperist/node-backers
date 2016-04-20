@@ -30,6 +30,7 @@ block content
 		input(type='text', name='pass', value='', id='pass-edit')
 		label Name
 		input(type='text', name='name', id='name-edit')
+		hr
 		label Status
 		select#status(name='status')
 			option(value='')
@@ -38,6 +39,9 @@ block content
 			option(value='Inactive') Inactive
 		label Email
 		input(type='text', name='email', id='email-edit')
+		label Credits
+		input(type='text', name='credits', id='credits-edit')
+		hr
 		label.control-label(for='country-list') Location
 			select#country-list(name='country')
 				each item in countries
