@@ -66,5 +66,6 @@ $(document).ready(function(){
 			bv.showOutletsError('Search Failure', 'Please check search inputs');
 		}
 	}); 
+	setTimeout(function() { $('#outlets-form button').trigger('click'); }, 1200);
 	$('#category').focus();
 })

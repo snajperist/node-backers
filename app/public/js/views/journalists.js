@@ -66,5 +66,6 @@ $(document).ready(function(){
 			bv.showJournalistsError('Search Failure', 'Please check search inputs');
 		}
 	}); 
+	setTimeout(function() { $('#journalists-form button').trigger('click'); }, 1200);
 	$('#category').focus();
 })

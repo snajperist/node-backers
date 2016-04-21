@@ -68,6 +68,5 @@ $(document).ready(function(){
 			$('.spinner2').hide();
 		}
 	}); 
-	
-	$('#journalists-form button').trigger('click');
+	setTimeout(function() { $('#journalists-form button').trigger('click'); }, 1200);
 })

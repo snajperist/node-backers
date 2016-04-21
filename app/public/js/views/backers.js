@@ -74,5 +74,6 @@ $(document).ready(function(){
 			bv.showBackersError('Search Failure', 'Please check search inputs');
 		}
 	}); 
+	setTimeout(function() { $('#backers-form button').trigger('click'); }, 1200);
 	$('#name-tf').focus();
 })
