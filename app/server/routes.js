@@ -265,7 +265,7 @@ module.exports = function(app) {
 	
 
 // logged-in user journalists search //
-	app.get('/deletejournalists', function(req, res) {
+	/*app.get('/deletejournalists', function(req, res) {
 		AM.deleteJournalists(function(e, o){
 			if (!o){
 				res.status(400).send(e);
@@ -273,7 +273,7 @@ module.exports = function(app) {
 				res.send(o);
 			}
 		})
-	});
+	});*/
 	
 	app.get('/journalists', function(req, res) {
 		if (req.session.user == null) {
@@ -346,19 +346,6 @@ module.exports = function(app) {
 // save outlets
 	app.post('/saveoutlets', function(req, res) {
 		AM.saveOutlets(req.body, function(e, o){
-			if (!o){
-				res.status(400).send(e);
-			}	else{
-				res.send(o);
-			}
-		})
-	});
-	
-	
-	
-// logged-in user outlets search //
-	app.get('/deleteoutlets', function(req, res) {
-		AM.deleteOutlets(function(e, o){
 			if (!o){
 				res.status(400).send(e);
 			}	else{

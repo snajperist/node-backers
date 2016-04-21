@@ -23534,6 +23534,7 @@ table > tbody > tr.selected:hover > td {
 }
 .table-hover td {
   border-bottom: 2px solid #F0F4F8;
+  padding-right: 3px;
 }
 .table-bordered thead th {
   background-color: #F0F4F8;
@@ -25579,10 +25580,18 @@ textarea.parsley-error {
   margin-right: 5px;
 }
 
-#journalists_table th {
+#outlets_table th {
   text-transform: uppercase;
   padding-bottom: 8px;
   border-bottom: 2px solid #bbb;
+}
+
+#outlets-form select, input {
+  margin-right: 25px;
+}
+
+#outlets-form label {
+  margin-right: 5px;
 }
 
 #account-form input, select {

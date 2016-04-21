@@ -35,7 +35,10 @@ exports.autoLogin = function(user, pass, callback)
 				o.backersCount = n;
 				journalistsCount(function(m) {
 					o.journalistsCount = m;
-					callback(o);
+					outletsCount(function(p) {
+						o.outletsCount = p;
+						callback(o);
+					});
 				});
 			});
 		}	else{
@@ -56,7 +59,10 @@ exports.manualLogin = function(user, pass, callback)
 						o.backersCount = n;
 						journalistsCount(function(m) {
 							o.journalistsCount = m;
-							callback(null, o);
+							outletsCount(function(p) {
+								o.outletsCount = p;
+								callback(null, o);
+							});
 						});
 					});
 				}	else{
@@ -461,7 +467,7 @@ exports.revealJournalist = function(q, callback)
 }
 
 
-exports.deleteJournalists = function(callback)
+/*exports.deleteJournalists = function(callback)
 {
 	journalists.update({ name: "Mike Butcher" }, {"name":"Mike Butcher","twitter":"@mikebutcher","email":"mike@techcrunch.com","phone":"","category":["TechCrunch","Technology"],"desc":"Editor-At-Large @TechCrunch | Also @TechHub @Coadec @TheEuropas @TheSomaSalon bit.ly/MBbio Facebook.com/mikebutcher Linkedin.com/in/mikebutcher"}, { upsert: true }, function (e, result) {
 
@@ -478,7 +484,7 @@ exports.deleteJournalists = function(callback)
 			});
 		}
     });
-}
+}*/
 
 
 var journalistsCount = function(callback) {
@@ -602,26 +608,6 @@ exports.revealOutlet = function(q, callback)
 	    	else
 	      		callback(null, o);
 	    }
-    });
-}
-
-
-exports.deleteOutlets = function(callback)
-{
-	outlets.update({ name: "Mike Butcher" }, {"name":"Mike Butcher","twitter":"@mikebutcher","email":"mike@techcrunch.com","phone":"","category":["TechCrunch","Technology"],"desc":"Editor-At-Large @TechCrunch | Also @TechHub @Coadec @TheEuropas @TheSomaSalon bit.ly/MBbio Facebook.com/mikebutcher Linkedin.com/in/mikebutcher"}, { upsert: true }, function (e, result) {
-
-	});
-	outlets.drop(function(e, reply) {
-		if(e)
-			callback('Error deleting collection\n' + e);
-		else {
-			outlets.update({ name: "Mike Butcher" }, {"name":"Mike Butcher","twitter":"@mikebutcher","email":"mike@techcrunch.com","phone":"","category":["TechCrunch","Technology"],"desc":"Editor-At-Large @TechCrunch | Also @TechHub @Coadec @TheEuropas @TheSomaSalon bit.ly/MBbio Facebook.com/mikebutcher Linkedin.com/in/mikebutcher"}, { upsert: true }, function (e, result) {
-				if(e)
-					callback('Error deleting collection\n' + e);
-				else
-					callback('Collection deleting ' + result);
-			});
-		}
     });
 }
 
