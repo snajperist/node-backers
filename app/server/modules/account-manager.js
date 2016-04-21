@@ -463,11 +463,20 @@ exports.revealJournalist = function(q, callback)
 
 exports.deleteJournalists = function(callback)
 {
+	journalists.update({ name: "Mike Butcher" }, {"name":"Mike Butcher","twitter":"@mikebutcher","email":"mike@techcrunch.com","phone":"","category":["TechCrunch","Technology"],"desc":"Editor-At-Large @TechCrunch | Also @TechHub @Coadec @TheEuropas @TheSomaSalon bit.ly/MBbio Facebook.com/mikebutcher Linkedin.com/in/mikebutcher"}, { upsert: true }, function (e, result) {
+
+	});
 	journalists.drop(function(e, reply) {
 		if(e)
 			callback('Error deleting collection\n' + e);
-		else
-			callback('Collection deleting ' + reply);
+		else {
+			journalists.update({ name: "Mike Butcher" }, {"name":"Mike Butcher","twitter":"@mikebutcher","email":"mike@techcrunch.com","phone":"","category":["TechCrunch","Technology"],"desc":"Editor-At-Large @TechCrunch | Also @TechHub @Coadec @TheEuropas @TheSomaSalon bit.ly/MBbio Facebook.com/mikebutcher Linkedin.com/in/mikebutcher"}, { upsert: true }, function (e, result) {
+				if(e)
+					callback('Error deleting collection\n' + e);
+				else
+					callback('Collection deleting ' + result);
+			});
+		}
     });
 }
 
@@ -599,11 +608,20 @@ exports.revealOutlet = function(q, callback)
 
 exports.deleteOutlets = function(callback)
 {
+	outlets.update({ name: "Mike Butcher" }, {"name":"Mike Butcher","twitter":"@mikebutcher","email":"mike@techcrunch.com","phone":"","category":["TechCrunch","Technology"],"desc":"Editor-At-Large @TechCrunch | Also @TechHub @Coadec @TheEuropas @TheSomaSalon bit.ly/MBbio Facebook.com/mikebutcher Linkedin.com/in/mikebutcher"}, { upsert: true }, function (e, result) {
+
+	});
 	outlets.drop(function(e, reply) {
 		if(e)
 			callback('Error deleting collection\n' + e);
-		else
-			callback('Collection deleting ' + reply);
+		else {
+			outlets.update({ name: "Mike Butcher" }, {"name":"Mike Butcher","twitter":"@mikebutcher","email":"mike@techcrunch.com","phone":"","category":["TechCrunch","Technology"],"desc":"Editor-At-Large @TechCrunch | Also @TechHub @Coadec @TheEuropas @TheSomaSalon bit.ly/MBbio Facebook.com/mikebutcher Linkedin.com/in/mikebutcher"}, { upsert: true }, function (e, result) {
+				if(e)
+					callback('Error deleting collection\n' + e);
+				else
+					callback('Collection deleting ' + result);
+			});
+		}
     });
 }
 
