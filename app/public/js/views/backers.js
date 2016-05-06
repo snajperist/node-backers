@@ -13,6 +13,7 @@ $(document).ready(function(){
 			} else {
 				pl = true;
 				$('.spinner2').show();
+				grecaptcha.reset();
 				return true;
 			}
 		},
