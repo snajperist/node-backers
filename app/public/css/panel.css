@@ -4191,7 +4191,7 @@ body:not(.fixed-sidebar):not(.fixed-topbar):not(.sidebar-top) .sidebar .logopane
   min-height: 750px;
 }
 .main-content .page-content {
-  background: #F5F5F5;
+  background: #FAFAFA;
   margin-top: 50px;
   overflow: hidden;
   padding: 20px 50px 0;

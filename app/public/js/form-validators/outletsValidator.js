@@ -22,3 +22,14 @@ OutletsValidator.prototype.validateForm = function()
 	}	else
 		return true;
 }
+
+OutletsValidator.prototype.validateCaptcha = function(pl)
+{
+	var v = grecaptcha.getResponse();
+	if(pl && v.length == 0) {
+        this.showOutletsError('Captcha isn\'t solved', 'Please check captcha');
+        return false;
+    }
+    else
+        return true; 
+}

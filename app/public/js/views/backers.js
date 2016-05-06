@@ -2,14 +2,16 @@
 $(document).ready(function(){
 	
 	var bv = new BackersValidator();
+	var pl = false;
 
 // main login form //
 
 	$('#backers-form').ajaxForm({
 		beforeSubmit : function(formData, jqForm, options){
-			if (bv.validateForm() == false){
+			if (bv.validateForm() == false || bv.validateCaptcha(pl) == false) {
 				return false;
-			} 	else{
+			} else {
+				pl = true;
 				$('.spinner2').show();
 				return true;
 			}

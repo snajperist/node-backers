@@ -330,7 +330,7 @@ exports.saveBackers = function(bs, callback)
 }
 
 
-exports.deleteBackers = function(callback)
+/*exports.deleteBackers = function(callback)
 {
 	backers.drop(function(e, reply) {
 		if(e)
@@ -338,7 +338,7 @@ exports.deleteBackers = function(callback)
 		else
 			callback('Collection deleting ' + reply);
     });
-}
+}*/
 
 
 var backersCount = function(callback) {

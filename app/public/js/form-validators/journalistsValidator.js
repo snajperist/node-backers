@@ -22,3 +22,14 @@ JournalistsValidator.prototype.validateForm = function()
 	}	else
 		return true;
 }
+
+JournalistsValidator.prototype.validateCaptcha = function(pl)
+{
+	var v = grecaptcha.getResponse();
+	if(pl && v.length == 0) {
+        this.showJournalistsError('Captcha isn\'t solved', 'Please check captcha');
+        return false;
+    }
+    else
+        return true; 
+}

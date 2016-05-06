@@ -2,14 +2,16 @@
 $(document).ready(function(){
 	
 	var bv = new JournalistsValidator();
+	var pl = false;
 
 // main login form //
 
 	$('#journalists-form').ajaxForm({
-		beforeSubmit : function(formData, jqForm, options){
-			if (bv.validateForm() == false){
+		beforeSubmit : function(formData, jqForm, options) {
+			if (bv.validateForm() == false || bv.validateCaptcha(pl) == false) {
 				return false;
-			} 	else{
+			} else {
+				pl = true;
 				$('.spinner2').show();
 				return true;
 			}
@@ -65,7 +67,7 @@ $(document).ready(function(){
 			$('.spinner2').hide();
 			bv.showJournalistsError('Search Failure', 'Please check search inputs');
 		}
-	}); 
+	});
 	setTimeout(function() { $('#journalists-form button').trigger('click'); }, 1200);
 	$('#category').focus();
 })

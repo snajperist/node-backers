@@ -22,3 +22,14 @@ BackersValidator.prototype.validateForm = function()
 	}	else
 		return true;
 }
+
+BackersValidator.prototype.validateCaptcha = function(pl)
+{
+	var v = grecaptcha.getResponse();
+	if(pl && v.length == 0) {
+        this.showBackersError('Captcha isn\'t solved', 'Please check captcha');
+        return false;
+    }
+    else
+        return true; 
+}
