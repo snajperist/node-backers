@@ -13,7 +13,6 @@ $(document).ready(function(){
 			} else {
 				pl = true;
 				$('.spinner2').show();
-				grecaptcha.reset();
 				return true;
 			}
 		},
@@ -71,9 +70,11 @@ $(document).ready(function(){
 			    } );
 			}
 			$('.spinner2').hide();
+			grecaptcha.reset();
 		},
 		error : function(e){
 			$('.spinner2').hide();
+			grecaptcha.reset();
 			bv.showBackersError('Search Failure', 'Please check search inputs');
 		}
 	}); 
