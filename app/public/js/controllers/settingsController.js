@@ -6,7 +6,7 @@ function SettingsController()
 	var that = this;
 
 // handle account deletion //
-	$('#confirm-delete').click(function(){ that.deleteAccount(); });
+	$('#confirm-delete').click(function() { that.deleteAccount(); });
 	
 	this.deleteAccount = function()
 	{

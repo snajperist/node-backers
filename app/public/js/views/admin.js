@@ -11,17 +11,14 @@ $(document).ready(function(){
 		},
 		success	: function(responseText, status, xhr, $form){
 			if (status == 'success') { 
-				var tbl_thead = '<thead><tr><th>User</th><th></th><th>Name</th><th>Email</th><th>Credits</th><th>Country</th><th>Date Registered</th><th>ID (Edit)</th></tr></thead>';
+				var tbl_thead = '<thead><tr><th></th><th>Name</th><th>Email</th><th>Credits</th><th>Country</th><th>Date Registered</th><th>ID (Edit)</th></tr></thead>';
 				var tbl_body = document.createElement("tbody");
 		    	var odd_even = false;
 		    	$.each(responseText, function() {
 		        	var tbl_row = tbl_body.insertRow();
 		        	tbl_row.className = odd_even ? "odd" : "even";
 	
-		        	var cell = tbl_row.insertCell();
-	        		cell.innerHTML = this['user'].toString();
-	        		
-	        		cell = tbl_row.insertCell();
+	        		var cell = tbl_row.insertCell();
 	        		if(this.hasOwnProperty('status') && this['status'] != null) {
 	        			if(this['status'].toString() == 'Admin')
 	        				cell.innerHTML = '<i class="busy"></i>';
@@ -68,20 +65,19 @@ $(document).ready(function(){
 				$('#accounts_table a').click(function(event) {
 					$('#edit-form').removeClass('hidden');
 					var columns = $(event.target).parent().parent().children();
-					$('#user-edit').val(columns.eq(0).text());
-					if(columns.eq(1).html().indexOf('busy') != -1)
+					if(columns.eq(0).html().indexOf('busy') != -1)
 						$('#status').val('Admin');
-					else if(columns.eq(1).html().indexOf('online') != -1)
+					else if(columns.eq(0).html().indexOf('online') != -1)
 						$('#status').val('Active');
-					else if(columns.eq(1).html().indexOf('away') != -1)
+					else if(columns.eq(0).html().indexOf('away') != -1)
 						$('#status').val('Inactive');
 					else
 						$('#status').val('');
-					$('#name-edit').val(columns.eq(2).text());
-					$('#email-edit').val(columns.eq(3).text());
-					$('#credits-edit').val(columns.eq(4).text());
-					$('#country-list').val(columns.eq(5).text());
-					$('#userId').val(columns.eq(7).text());
+					$('#name-edit').val(columns.eq(1).text());
+					$('#email-edit').val(columns.eq(2).text());
+					$('#credits-edit').val(columns.eq(3).text());
+					$('#country-list').val(columns.eq(4).text());
+					$('#userId').val(columns.eq(6).text());
 				});
 			}
 		},
@@ -105,6 +101,7 @@ $(document).ready(function(){
 			}
 	});
 	
+	$('#accounts-form button').trigger('click');
 	$('#user-tf').focus();
 	$('#account-form-btn1').html('Delete');
 	$('#account-form-btn1').addClass('btn-danger');

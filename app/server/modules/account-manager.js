@@ -12,11 +12,10 @@ var dbName 		= 'node-login';
 
 var db = new MongoDB(dbName, new Server(dbHost, dbPort, {auto_reconnect: true}), {w: 1});
 	db.open(function(e, d){
-	if (e) {
+	if(e)
 		console.log(e);
-	}	else{
+	else
 		console.log('connected to database :: ' + dbName);
-	}
 });
 var accounts 	= db.collection('accounts');
 var backers 	= db.collection('backers');
@@ -27,10 +26,10 @@ var ocontacts 	= db.collection('ocontacts');
 
 /* login validation methods */
 
-exports.autoLogin = function(user, pass, callback)
+exports.autoLogin = function(email, pass, callback)
 {
-	accounts.findOne({user:user}, function(e, o) {
-		if (o && o.pass == pass){
+	accounts.findOne({email:email}, function(e, o) {
+		if(o && o.pass == pass){
 			backersCount(function(n) {
 				o.backersCount = n;
 				journalistsCount(function(m) {
@@ -41,20 +40,20 @@ exports.autoLogin = function(user, pass, callback)
 					});
 				});
 			});
-		}	else{
-			callback(null);
 		}
+		else
+			callback(null);
 	});
 }
 
-exports.manualLogin = function(user, pass, callback)
+exports.manualLogin = function(email, pass, callback)
 {
-	accounts.findOne({user:user}, function(e, o) {
-		if (o == null){
+	accounts.findOne({email:email}, function(e, o) {
+		if(o == null)
 			callback('user-not-found');
-		}	else{
+		else {
 			validatePassword(pass, o.pass, function(err, res) {
-				if (res){
+				if(res) {
 					backersCount(function(n) {
 						o.backersCount = n;
 						journalistsCount(function(m) {
@@ -65,9 +64,9 @@ exports.manualLogin = function(user, pass, callback)
 							});
 						});
 					});
-				}	else{
-					callback('invalid-password');
 				}
+				else
+					callback('invalid-password');
 			});
 		}
 	});
@@ -77,22 +76,15 @@ exports.manualLogin = function(user, pass, callback)
 
 exports.addNewAccount = function(newData, callback)
 {
-	accounts.findOne({user:newData.user}, function(e, o) {
-		if (o){
-			callback('username-taken');
-		}	else{
-			accounts.findOne({email:newData.email}, function(e, o) {
-				if (o){
-					callback('email-taken');
-				}	else{
-					saltAndHash(newData.pass, function(hash){
-						newData.pass = hash;
-					// append date stamp when record was created //
-						newData.date 	= moment().format('MMMM Do YYYY, h:mm:ss a');
-						newData.credits = 0;
-						accounts.insert(newData, {safe: true}, callback);
-					});
-				}
+	accounts.findOne({email:newData.email}, function(e, o) {
+		if(o)
+			callback('email-taken');
+		else {
+			saltAndHash(newData.pass, function(hash){
+				newData.pass 	= hash;
+				newData.date 	= moment().format('MMMM Do YYYY, h:mm:ss a');
+				newData.credits = 0;
+				accounts.insert(newData, {safe: true}, callback);
 			});
 		}
 	});
@@ -100,44 +92,19 @@ exports.addNewAccount = function(newData, callback)
 
 exports.updateAccount = function(newData, callback)
 {
-	accounts.findOne({user:newData.user}, function(e, o) {
-		o.name 		= newData.name;
-		o.email 	= newData.email;
-		o.country 	= newData.country;
-		if (newData.pass == ''){
-			accounts.save(o, {safe: true}, function(err) {
-				if (err) callback(err);
-				else callback(null, o);
-			});
-		}	else{
-			saltAndHash(newData.pass, function(hash){
-				o.pass = hash;
-				accounts.save(o, {safe: true}, function(err) {
-					if (err) callback(err);
-					else callback(null, o);
-				});
-			});
-		}
-	});
-}
-
-exports.adminUpdateAccount = function(newData, callback)
-{
-	accounts.findOne({user:newData.user}, function(e, o) {
-		o.name 		= newData.name;
-		o.email 	= newData.email;
-		o.credits 	= parseInt(newData.credits);
-		o.country 	= newData.country;
-		o.status 	= newData.status;
-		if(newData.credits.length > 0 && !parseInt(newData.credits))
-			callback('Credits should have numeric value');
+	accounts.findOne({email:newData.email}, function(e, o) {
+		if(e || !o)
+			callback('Cannot edit account');
 		else {
-			if (newData.pass == ''){
+			o.name 		= newData.name;
+			o.email 	= newData.email;
+			o.country 	= newData.country;
+			if(newData.pass == '') {
 				accounts.save(o, {safe: true}, function(err) {
-					if (err) callback(err);
+					if(err) callback(err);
 					else callback(null, o);
 				});
-			}	else{
+			} else {
 				saltAndHash(newData.pass, function(hash){
 					o.pass = hash;
 					accounts.save(o, {safe: true}, function(err) {
@@ -145,6 +112,39 @@ exports.adminUpdateAccount = function(newData, callback)
 						else callback(null, o);
 					});
 				});
+			}
+		}
+	});
+}
+
+exports.adminUpdateAccount = function(newData, callback)
+{
+	accounts.findOne({_id:require('mongodb').ObjectID(newData.userid)}, function(e, o) {
+		if(e || !o)
+			callback('Cannot find account');
+		else {
+			o.name 		= newData.name;
+			o.email 	= newData.email;
+			o.credits 	= parseInt(newData.credits);
+			o.country 	= newData.country;
+			o.status 	= newData.status;
+			if(newData.credits.length > 0 && !parseInt(newData.credits))
+				callback('Credits should have numeric value');
+			else {
+				if(newData.pass == '') {
+					accounts.save(o, {safe: true}, function(err) {
+						if(err) callback(err);
+						else callback(null, o);
+					});
+				} else {
+					saltAndHash(newData.pass, function(hash) {
+						o.pass = hash;
+						accounts.save(o, {safe: true}, function(err) {
+							if(err) callback(err);
+							else callback(null, o);
+						});
+					});
+				}
 			}
 		}
 	});
@@ -229,7 +229,7 @@ var validatePassword = function(plainPass, hashedPass, callback)
 
 exports.returnAllAccounts = function(q, callback)
 {
-	accounts.find( { user:{'$regex':q.user}, name:{'$regex':q.name}, email:{'$regex':q.email}, country:{'$regex':q.country} } ).limit(1250).toArray(function(e, o) {
+	accounts.find( { name:{'$regex':q.name}, email:{'$regex':q.email}, country:{'$regex':q.country} } ).limit(1250).toArray(function(e, o) {
 	    if(e)
 	      callback(e, null);
 	    else {
@@ -422,10 +422,8 @@ exports.saveJournalists = function(js, callback)
 exports.revealJournalist = function(q, callback)
 {
 	contacts.find( { user:q.user, journalist:q.journalist }, { _id: 0 } ).limit(1000).toArray(function(e, o) {
-	    if(e) {
+	    if(e)
 			callback(e, null);
-	      	console.log(e);
-	    }
 	    else {
 	    	if(o.length == 0) {
 	    		accounts.findOne( { _id:require('mongodb').ObjectID(q.user) }, function(e, u) {
@@ -567,10 +565,8 @@ exports.saveOutlets = function(js, callback)
 exports.revealOutlet = function(q, callback)
 {
 	ocontacts.find( { user:q.user, outlet:q.outlet }, { _id: 0 } ).limit(1000).toArray(function(e, o) {
-	    if(e) {
+	    if(e)
 			callback(e, null);
-	      	console.log(e);
-	    }
 	    else {
 	    	if(o.length == 0) {
 	    		accounts.findOne( { _id:require('mongodb').ObjectID(q.user) }, function(e, u) {
@@ -624,7 +620,7 @@ var outletsCount = function(callback) {
 
 exports.creditsCount = function(user, callback)
 {
-	accounts.findOne({user:user.user}, function(e, o) {
+	accounts.findOne({email:user.email}, function(e, o) {
 		if(!o)
 			callback(e, null);
 		else

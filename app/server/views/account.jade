@@ -3,7 +3,7 @@
 input(type='hidden', value= user._id)#userId
 
 #account-form-container
-	form( method="post")#account-form.form-horizontal.well.span6
+	form(method="post")#account-form.form-horizontal.well.span6
 		h1
 		p#sub1.subheading Please tell us a little about yourself.
 		hr
@@ -15,18 +15,13 @@ input(type='hidden', value= user._id)#userId
 			#email-cg.control-group
 				label.control-label(for='email-tf') Email
 				.controls
-					input#email-tf(type='text', name='email', value= user.email)
+					input#email-tf(type='text', name='email', readonly='readonly', value= user.email)
 			#clist-cg.control-group
 				label.control-label(for='country-list') Location
 				.controls
 					select#country-list(name='country')
 						each item in countries
 							option(selected=item.name == user.country)= item.name
-			p#sub2.subheading
-			#user-cg.control-group
-				label.control-label(for='user-tf') Username
-				.controls
-					input#user-tf.disabled(type='text', name='user', value= user.user)
 			#pass-cg.control-group
 				label.control-label(for='pass-tf') Password
 				.controls
@@ -35,7 +30,5 @@ input(type='hidden', value= user._id)#userId
 			.form-buttons
 				button(type='button' data-toggle='modal' data-target='#modal-confirm')#account-form-btn1.btn
 				button(type='submit' data-toggle='modal' data-target='#modal-alert')#account-form-btn2.btn
-
-// display form errors in a custom modal window //
 
 include modals/form-errors

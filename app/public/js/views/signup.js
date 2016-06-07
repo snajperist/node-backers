@@ -15,12 +15,9 @@ $(document).ready(function(){
 			}
 		},
 		error : function(e){
-			if (e.responseText == 'email-taken'){
+			if (e.responseText == 'email-taken')
 			    av.showMessage('Error', 'Email is already taken');
-			}	else if (e.responseText == 'username-taken'){
-			    av.showMessage('Error', 'Username is already taken');
-			}
 		}
 	});
-	$('#name-tf').focus();
+	$('#email-tf').focus();
 })

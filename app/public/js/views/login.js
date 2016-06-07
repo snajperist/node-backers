@@ -20,10 +20,10 @@ $(document).ready(function(){
 			if (status == 'success') window.location.href = '/dashboard';
 		},
 		error : function(e){
-			lv.showLoginError('Login Failure', 'Please check your username and/or password');
+			lv.showLoginError('Login Failure', 'Please check your email and/or password');
 		}
 	}); 
-	$('#user-tf').focus();
+	$('#email-tf').focus();
 	
 // login retrieval form via email //
 	

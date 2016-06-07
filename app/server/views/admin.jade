@@ -5,8 +5,6 @@ block content
 		h1 Accounts Search
 		p#sub1.subheading Search inputs support partial match
 		input(type='hidden', name='type', value='search')
-		label User
-		input(type='text', name='user', id='user-tf')
 		label Name
 		input(type='text', name='name', id='name-tf')
 		label Email
@@ -23,9 +21,7 @@ block content
 		h1 Edit user
 		hr
 		input(type='hidden', name='type', value='update')
-		input(type='hidden', value='')#userId
-		label User
-		input(type='text', name='user', id='user-edit')
+		input(type='hidden', name='user-id', value='')#userId
 		label Password
 		input(type='text', name='pass', value='', id='pass-edit')
 		label Name
