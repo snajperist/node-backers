@@ -12,10 +12,17 @@ $(document).ready(function(){
 				return true;
 		},
 		success	: function(responseText, status, xhr, $form) {
-			if (status == 'success') hc.onUpdate('Updated!', 'Account successfully updated!');
+			if(status == 'success') {
+				hc.onUpdate('Updated!', 'Account successfully updated!');
+				setTimeout(function(){ window.location.href = '/login'; }, 2000);
+			}
 		},
 		error : function(e) {
 			if(e.responseText == 'email-taken')
+				av.showSignupError('Error', 'Email taken');
+			else if(e.responseText == 'error-updating-account')
+				av.showSignupError('Error', 'Error updating an account');
+			else
 				av.showSignupError('Error', 'Email taken');
 		}
 	});

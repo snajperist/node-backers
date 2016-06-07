@@ -21,13 +21,13 @@ function AccountValidator(){
 
 AccountValidator.prototype.validateForm = function()
 {
-	if ($('#name-tf').val() == undefined || $('#name-tf').val().length < 2){
+	if ($('#name-tf').val() == undefined || $('#name-tf').val().length < 2) {
 		this.showSignupError('Whoops!', 'Please enter a valid name');
 		return false;
 	}	else if ($('#pass-tf').val() == undefined || ($('#pass-tf').val().length > 0 && $('#pass-tf').val().length < 6)) {
 		this.showSignupError('Whoops!', 'Please enter a valid password');
 		return false;
-	}	else if ($('#email-tf').val() == undefined || !this.validateEmail($('#email-tf').val())){
+	}	else if ($('#email-tf').val() == undefined || !this.validateEmail($('#email-tf').val())) {
 		this.showSignupError('Whoops!', 'Please enter a valid email');
 		return false;
 	}	else {

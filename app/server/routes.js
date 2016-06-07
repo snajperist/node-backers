@@ -6,19 +6,18 @@ module.exports = function(app) {
 
 	// main page //
 	app.get('/', function(req, res) {
-		//res.render('index');
 		res.redirect('/login');
 	});
 	
 	
 	// login page //
 	app.get('/login', function(req, res) {
-		if (req.cookies.email == undefined || req.cookies.pass == undefined)
+		if(req.cookies.email == undefined || req.cookies.pass == undefined)
 			res.render('login', { title: 'Login To BackersLab' });
 		else {
 			AM.autoLogin(req.cookies.email, req.cookies.pass, function(o) {
 				if(o != null) {
-				    req.session.email = o;
+				    req.session.user = o;
 					res.redirect('/dashboard');
 				} else
 					res.render('login', { title: 'Login To BackersLab' });
@@ -42,7 +41,7 @@ module.exports = function(app) {
 
 	// logged-in user homepage //
 	app.get('/dashboard', function(req, res) {
-		if(req.session.email == null)
+		if(req.session.user == null)
 			res.redirect('/');
 		else {
 			res.render('dashboard', {
@@ -111,18 +110,20 @@ module.exports = function(app) {
 	});
 	
 	app.post('/settings', function(req, res) {
-		if(req.body['email'] != undefined) {
+		if(req.body['email'] != undefined && req.body['email'] == req.session.user.email && req.body['subject'].length < 128 && req.body['message'].length < 1024) {
 			AM.updateAccount({
 				name 	: req.body['name'],
 				email 	: req.body['email'],
 				pass	: req.body['pass'],
-				country : req.body['country']
+				country : req.body['country'],
+				subject : req.body['subject'],
+				message : req.body['message']
 			}, function(e, o) {
 				if(e)
 					res.status(400).send('error-updating-account');
 				else {
-					req.session.email = o;
-					if (req.cookies.email != undefined && req.cookies.pass != undefined) {
+					req.session.user = o;
+					if(req.cookies.email != undefined && req.cookies.pass != undefined) {
 						res.cookie('email', o.email, { maxAge: 900000 });
 						res.cookie('pass', o.pass, { maxAge: 900000 });	
 					}
@@ -134,6 +135,8 @@ module.exports = function(app) {
 			res.clearCookie('pass');
 			req.session.destroy(function(e) { res.status(200).send('ok'); });
 		}
+		else
+			res.status(400).send('error-updating-account');
 	});
 
 
@@ -392,6 +395,8 @@ module.exports = function(app) {
 			email 	: req.body['email'],
 			pass	: req.body['pass'],
 			country : req.body['country'],
+			subject : '',
+			message : '',
 			status 	: (req.body['email'] == 'admin@backerslab.com' ? 'Admin' : 'Inactive')
 		}, function(e){
 			if(e)
@@ -408,7 +413,7 @@ module.exports = function(app) {
 			if(!e && req.session.user['status'] != 'Admin'){
 				res.clearCookie('email');
 				res.clearCookie('pass');
-				req.session.destroy(function(e){ res.status(200).send('ok'); });
+				req.session.destroy(function(e) { res.status(200).send('ok'); });
 			} else if(req.session.user['status'] == 'Admin')
 				res.status(200).send('ok');
 			else

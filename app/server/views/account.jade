@@ -27,6 +27,15 @@ input(type='hidden', value= user._id)#userId
 				.controls
 					input#pass-tf(type='password', name='pass', value='')
 			hr
+			#subject-cg.control-group
+				label.control-label(for='subject-tf') Contact Email Subject
+				.controls
+					input#subject-tf(type='text', name='subject', value= user.subject)
+			#message-cg.control-group
+				label.control-label(for='message-tf') Message
+				.controls
+					textarea#message-tf(type='text', name='message', rows='10', cols='40')= user.message
+			hr
 			.form-buttons
 				button(type='button' data-toggle='modal' data-target='#modal-confirm')#account-form-btn1.btn
 				button(type='submit' data-toggle='modal' data-target='#modal-alert')#account-form-btn2.btn
