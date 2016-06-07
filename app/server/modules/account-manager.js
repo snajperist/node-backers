@@ -635,10 +635,10 @@ exports.sendEmail = function(callback)
 	var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
 	
 	var data = {
-	  from: 'Excited User <me@samples.mailgun.org>',
+	  from: 'Marin Begic <m-begic@hotmail.com>',
 	  to: 'marin.begic36@gmail.com',
-	  subject: 'Hello',
-	  text: 'Testing some Mailgun awesomness!'
+	  subject: 'Hello2',
+	  text: 'Testing2 some Mailgun awesomness!'
 	};
 	
 	mailgun.messages().send(data, function (e, body) {
