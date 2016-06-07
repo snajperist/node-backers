@@ -392,9 +392,9 @@ module.exports = function(app) {
 			email 	: req.body['email'],
 			pass	: req.body['pass'],
 			country : req.body['country'],
-			status 	: (req.body['name'] == 'admin' ? 'Admin' : 'Inactive')
+			status 	: (req.body['email'] == 'admin@backerslab.com' ? 'Admin' : 'Inactive')
 		}, function(e){
-			if (e)
+			if(e)
 				res.status(400).send(e);
 			else
 				res.status(200).send('ok');
@@ -405,7 +405,7 @@ module.exports = function(app) {
 	// view & delete accounts //
 	app.post('/delete', function(req, res){
 		AM.deleteAccount(req.body.id, function(e, obj){
-			if (!e && req.session.user['status'] != 'Admin'){
+			if(!e && req.session.user['status'] != 'Admin'){
 				res.clearCookie('email');
 				res.clearCookie('pass');
 				req.session.destroy(function(e){ res.status(200).send('ok'); });
@@ -416,6 +416,16 @@ module.exports = function(app) {
 	    });
 	});
 
+	app.get('/test', function(req, res) {
+		console.log('test');
+		AM.sendEmail(function(e, obj) {
+			if(!e)
+				res.status(200).send('ok');
+			else
+				res.status(400).send('test mail failed');
+	    });
+	});
+	
 	app.get('*', function(req, res) { res.render('404', { title: 'Page Not Found'}); });
 
 };

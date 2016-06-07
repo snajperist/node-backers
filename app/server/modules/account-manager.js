@@ -627,3 +627,25 @@ exports.creditsCount = function(user, callback)
 			callback(null, o.credits);
 	});
 }
+
+exports.sendEmail = function(callback)
+{
+	var api_key = 'key-d86f8596f89c9aedbb7ca97abe2286e4';
+	var domain = 'backerslab.com';
+	var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
+	
+	var data = {
+	  from: 'Excited User <me@samples.mailgun.org>',
+	  to: 'marin.begic36@gmail.com',
+	  subject: 'Hello',
+	  text: 'Testing some Mailgun awesomness!'
+	};
+	
+	mailgun.messages().send(data, function (e, body) {
+		console.log(body);
+		if(e)
+			callback(e, null);
+		else
+			callback(null, 'okay');
+	});
+}
