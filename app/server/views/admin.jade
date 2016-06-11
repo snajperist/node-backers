@@ -43,6 +43,11 @@ block content
 				each item in countries
 					option= item.name
 		hr
+		label Subject
+		input(type='text', name='subject', id='subject-edit')
+		hr
+		textarea(type='text', name='message', id='message-edit' rows='10', cols='40')
+		hr
 		.form-buttons
 			button(type='button' data-toggle='modal' data-target='#modal-confirm')#account-form-btn1.btn
 			button(type='submit' data-toggle='modal' data-target='#modal-alert')#account-form-btn2.btn

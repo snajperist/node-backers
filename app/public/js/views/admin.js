@@ -6,7 +6,7 @@ $(document).ready(function(){
 // main login form //
 
 	$('#accounts-form').ajaxForm({
-		beforeSubmit : function(formData, jqForm, options){
+		beforeSubmit : function(formData, jqForm, options) {
 			return true;
 		},
 		success	: function(responseText, status, xhr, $form){
@@ -46,7 +46,7 @@ $(document).ready(function(){
 	        		cell.innerHTML = this['date'].toString();
 	        		
 	        		cell = tbl_row.insertCell();
-	        		cell.innerHTML = '<a href=#>' + this['_id'] + '</a>';
+	        		cell.innerHTML = '<a subject="' + (this['subject'] != undefined ? this['subject'].toString() : '') +  '" message="' + (this['message'] != undefined ? this['message'].toString() : '') + '" href=#>' + this['_id'] + '</a>';
 	        		
 	    	 	odd_even = !odd_even;               
 		    	})
@@ -77,6 +77,8 @@ $(document).ready(function(){
 					$('#email-edit').val(columns.eq(2).text());
 					$('#credits-edit').val(columns.eq(3).text());
 					$('#country-list').val(columns.eq(4).text());
+					$('#subject-edit').val(columns.eq(6).children(':first').attr('subject'));
+					$('#message-edit').val(columns.eq(6).children(':first').attr('message'));
 					$('#userId').val(columns.eq(6).text());
 				});
 			}

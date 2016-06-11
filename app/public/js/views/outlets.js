@@ -5,10 +5,9 @@ $(document).ready(function(){
 	var pl = false;
 
 // main login form //
-
 	$('#outlets-form').ajaxForm({
-		beforeSubmit : function(formData, jqForm, options){
-			if (bv.validateForm() == false || bv.validateCaptcha(pl) == false) {
+		beforeSubmit : function(formData, jqForm, options) {
+			if(bv.validateForm() == false || bv.validateCaptcha(pl) == false) {
 				return false;
 			} else {
 				pl = true;
@@ -41,10 +40,10 @@ $(document).ready(function(){
 	        		else
 	        			cell.innerHTML = '';
 	        			
-	        		var cell = tbl_row.insertCell();
+	        		cell = tbl_row.insertCell();
 	        		cell.innerHTML = (this['desc'].toString().substring(0,190) + (this['desc'].toString().length >= 190 ? '... ' : '')).replace(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+[a-z])/g, '*****@****.***').replace(/@[a-zA-Z0-9._-]+/g, '@******').replace(/\.com\/[a-zA-Z0-9._-]+/g, '.com/*****');
 	        		
-	        		var	cell = tbl_row.insertCell();
+	        		cell = tbl_row.insertCell();
 	        		cell.innerHTML = '<a target="_blank" href="contact-outlets?id=' + this['_id'] + '"><button type="submit" class="btn btn-primary"><i style="padding-right: 5px;" class="icon-search icon-magnifier"></i>Get contact details</button></a>';
 
 	    	 		odd_even = !odd_even;               

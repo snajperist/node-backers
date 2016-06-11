@@ -33,3 +33,8 @@ OutletsValidator.prototype.validateCaptcha = function(pl)
     else
         return true; 
 }
+
+OutletsValidator.prototype.showContacted = function()
+{
+	this.showOutletsError('Email sent!', 'Contact email has been sent. You can expect reply in your email inbox.');
+}

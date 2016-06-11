@@ -127,26 +127,24 @@ exports.adminUpdateAccount = function(newData, callback)
 		else {
 			o.name 		= newData.name;
 			o.email 	= newData.email;
-			o.credits 	= parseInt(newData.credits);
+			o.credits 	= (parseInt(newData.credits) ? parseInt(newData.credits) : 0);
 			o.country 	= newData.country;
 			o.status 	= newData.status;
-			if(newData.credits.length > 0 && !parseInt(newData.credits))
-				callback('Credits should have numeric value');
-			else {
-				if(newData.pass == '') {
+			o.subject 	= newData.subject;
+			o.message 	= newData.message;
+			if(newData.pass == '') {
+				accounts.save(o, {safe: true}, function(err) {
+					if(err) callback(err);
+					else callback(null, o);
+				});
+			} else {
+				saltAndHash(newData.pass, function(hash) {
+					o.pass = hash;
 					accounts.save(o, {safe: true}, function(err) {
 						if(err) callback(err);
 						else callback(null, o);
 					});
-				} else {
-					saltAndHash(newData.pass, function(hash) {
-						o.pass = hash;
-						accounts.save(o, {safe: true}, function(err) {
-							if(err) callback(err);
-							else callback(null, o);
-						});
-					});
-				}
+				});
 			}
 		}
 	});
@@ -435,18 +433,23 @@ exports.revealJournalist = function(q, callback)
 				    			if(v) {
 				    				v.user 		= q.user;
 				    				v.journalist= q.journalist;
-				    				contacts.save(v, { safe: true, upsert: true }, function(err) {
-										if (err)
-						    				callback(e, null);	    				
-										else {
-						    				accounts.update( { _id:require('mongodb').ObjectID(q.user) }, { $inc: { credits:-1} }, function(err) {
+				    				sendEmail(q.details.name, q.details.email, v.email, q.details.subject, q.details.message, function(err) {
+				    					if(err)
+							    			callback(err, null);
+							    		else
+						    				contacts.save(v, { safe: true, upsert: true }, function(err) {
 												if(err)
 								    				callback(err, null);	    				
-												else
-								    				callback(null, o);	    				
-											});    				
-						    			} 
-									});
+												else {
+								    				accounts.update( { _id:require('mongodb').ObjectID(q.user) }, { $inc: { credits:-1} }, function(err) {
+														if(err)
+										    				callback(err, null);	    				
+														else
+										    				callback(null, o);	    				
+													});
+								    			}
+											});
+				    				});
 				    			}
 				    			else
 				    				callback(e, null);
@@ -578,18 +581,24 @@ exports.revealOutlet = function(q, callback)
 				    			if(v) {
 				    				v.user 	= q.user;
 				    				v.outlet= q.outlet;
-				    				ocontacts.save(v, { safe: true, upsert: true }, function(err) {
-										if (err)
-						    				callback(e, null);	    				
-										else {
-						    				accounts.update( { _id:require('mongodb').ObjectID(q.user) }, { $inc: { credits:-1} }, function(err) {
+				    				console.log(q.details.name + ' ' + q.details.email + ' ' + v.email + '\n' + q.details.subject + '\n' + q.details.message)
+				    				sendEmail(q.details.name, q.details.email, v.email, q.details.subject, q.details.message, function(err) {
+				    					if(err)
+							    			callback(err, null);
+							    		else
+						    				ocontacts.save(v, { safe: true, upsert: true }, function(err) {
 												if(err)
 								    				callback(err, null);	    				
-												else
-								    				callback(null, o);	    				
-											});    				
-						    			} 
-									});
+												else {
+								    				accounts.update( { _id:require('mongodb').ObjectID(q.user) }, { $inc: { credits:-1} }, function(err) {
+														if(err)
+										    				callback(err, null);	    				
+														else
+										    				callback(null, o);	    				
+													});
+								    			}
+											});
+				    				});
 				    			}
 				    			else
 				    				callback(e, null);
@@ -630,24 +639,23 @@ exports.creditsCount = function(user, callback)
 	});
 }
 
-exports.sendEmail = function(callback)
+var sendEmail = function(name, replyto, email, subject, message, callback)
 {
 	var api_key = 'key-d86f8596f89c9aedbb7ca97abe2286e4';
-	var domain = 'backerslab.com';
-	var mailgun = require('mailgun-js')({apiKey: api_key, domain: domain});
+	var domain	= 'backerslab.com';
+	var mailgun = require('mailgun-js')({ apiKey: api_key, domain: domain });
 	
 	var data = {
-	  from: 'Admin <admin@backerslab.com>',
-	  to: 'marin.begic36@gmail.com',
-	  subject: 'Hello3',
-	  text: 'Testing3 some Mailgun awesomness!'
+	  from: name + ' <noreply@backerslab.com>',
+	  to: email,
+	  subject: subject,
+	  text: message
 	};
 	
-	mailgun.messages().send(data, function (e, body) {
-		console.log(body);
+	mailgun.messages().send(data, function(e, body) {
 		if(e)
-			callback(e, null);
+			callback(e);
 		else
-			callback(null, 'okay');
+			callback(null);
 	});
 }

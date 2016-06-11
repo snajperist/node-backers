@@ -3,6 +3,8 @@ $(document).ready(function(){
 
 // main login form //
 
+	var bv = new OutletsValidator();
+
 	$('#journalists-form').ajaxForm({
 		beforeSubmit : function(formData, jqForm, options){
 			$('.spinner2').show();
@@ -67,6 +69,8 @@ $(document).ready(function(){
 		error : function(e){
 			$('.spinner2').hide();
 		}
-	}); 
+	}); 	
+	
 	setTimeout(function() { $('#journalists-form button').trigger('click'); }, 1200);
+	setTimeout(function() { if(window.location.href.toString().indexOf('id=') != -1) { bv.showContacted(); } }, 1800);
 })

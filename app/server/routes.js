@@ -83,7 +83,9 @@ module.exports = function(app) {
 					credits : req.body['credits'],
 					pass	: req.body['pass'],
 					country : req.body['country'],
-					status 	: req.body['status']
+					status 	: req.body['status'],
+					subject : req.body['subject'],
+					message : req.body['message']
 				}, function(e, o){
 					if(e)
 						res.status(400).send('error-updating-account');
@@ -321,7 +323,7 @@ module.exports = function(app) {
 			res.redirect('/');
 		else {
 			if(req.query.id != null) {
-				AM.revealOutlet({ user:req.session.user._id, outlet:req.query.id }, function(e, o){
+				AM.revealOutlet({ user:req.session.user._id, details:req.session.user, outlet:req.query.id }, function(e, o){
 					if(!o) {
 						if(e == '0 credits')
 							res.redirect('/credits');
@@ -418,16 +420,6 @@ module.exports = function(app) {
 				res.status(200).send('ok');
 			else
 				res.status(400).send('record not found');
-	    });
-	});
-
-	app.get('/test', function(req, res) {
-		console.log('test');
-		AM.sendEmail(function(e, obj) {
-			if(!e)
-				res.status(200).send('ok');
-			else
-				res.status(400).send('test mail failed');
 	    });
 	});
 	

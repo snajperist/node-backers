@@ -16,10 +16,10 @@ function JournalistsValidator(){
 
 JournalistsValidator.prototype.validateForm = function()
 {
-	if ($('#keyword').val().length > 30){
+	if($('#keyword').val().length > 30){
 		this.showJournalistsError('Whoops!', 'Search input text is too long. Please check all inputs');
 		return false;
-	}	else
+	} else
 		return true;
 }
 
