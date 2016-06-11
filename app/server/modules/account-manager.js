@@ -640,9 +640,6 @@ exports.creditsCount = function(user, callback)
 
 var sendEmail = function(name, replyto, email, subject, message, callback)
 {
-	email = 'marin.begic36@gmail.com';
-	replyto = 'm-begic@hotmail.com';
-	console.log(name + '\n' + replyto + '\n' + email + '\n' + subject + '\n' + message);
 	var api_key = 'key-d86f8596f89c9aedbb7ca97abe2286e4';
 	var domain	= 'backerslab.com';
 	var mailgun = require('mailgun-js')({ apiKey: api_key, domain: domain });
@@ -652,12 +649,10 @@ var sendEmail = function(name, replyto, email, subject, message, callback)
 	  from: name + ' <reply@backerslab.com>',
 	  'h:Reply-To': replyto,
 	  subject: subject,
-	  text: message + '\n\n\n_________________________\n\nPlease reply directly to this email'
+	  text: message + '\n\n\n_________________________\n\nSent via backerslab.com\nPlease reply directly to this email'
 	};
-	console.log(JSON.stringify(data, null, 2));
-	
+
 	mailgun.messages().send(data, function(e, body) {
-		console.log(JSON.stringify(body));
 		if(e)
 			callback(e);
 		else
