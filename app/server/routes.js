@@ -250,7 +250,7 @@ module.exports = function(app) {
 			res.redirect('/');
 		else {
 			if(req.query.id != null) {
-				AM.revealJournalist({ user:req.session.user._id, journalist:req.query.id }, function(e, o){
+				AM.revealJournalist({ user:req.session.user._id, details:req.session.user, journalist:req.query.id }, function(e, o){
 					if(!o) {
 						if(e == '0 credits')
 							res.redirect('/credits');
@@ -323,7 +323,7 @@ module.exports = function(app) {
 			res.redirect('/');
 		else {
 			if(req.query.id != null) {
-				AM.revealOutlet({ user:req.session.user._id, details:req.session.user, outlet:req.query.id }, function(e, o){
+				AM.revealOutlet({ user:req.session.user._id, details:req.session.user, outlet:req.query.id }, function(e, o) {
 					if(!o) {
 						if(e == '0 credits')
 							res.redirect('/credits');
@@ -424,5 +424,4 @@ module.exports = function(app) {
 	});
 	
 	app.get('*', function(req, res) { res.render('404', { title: 'Page Not Found'}); });
-
 };

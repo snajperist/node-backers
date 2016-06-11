@@ -433,6 +433,7 @@ exports.revealJournalist = function(q, callback)
 				    			if(v) {
 				    				v.user 		= q.user;
 				    				v.journalist= q.journalist;
+				    				
 				    				sendEmail(q.details.name, q.details.email, v.email, q.details.subject, q.details.message, function(err) {
 				    					if(err)
 							    			callback(err, null);
