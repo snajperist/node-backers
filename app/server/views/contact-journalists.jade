@@ -1,10 +1,15 @@
 extends panel
 
 block content
-	h1 Contact Journalists
+	h1= title
 	p#sub1.subheading
-		span Find contact details for saved journalists
+		span Find contact details for saved
+		if title == 'Contact Outlets'
+			span  outlets
+		else if title == 'Contact Journalists'
+			span  journalists
 	form(method="post")#journalists-form.well
+		input(type='hidden', name='type', value='search')
 		label Name
 		input(type='text', name='name', id='name' placeholder='e.g. Mike Butcher')
 		button(type='submit')#journalists-form.btn.btn-primary
@@ -14,9 +19,25 @@ block content
 			.bounce1
 			.bounce2
 			.bounce3
-	table#journalists_table.table-hover.no-footer.table-striped(style='width: 100%;')
 	br
-	
+	form( method="post")#send-form.well.span6.hidden
+		h1 Send an email
+		hr
+		input(type='hidden', name='type', value='send')
+		label To 
+		input(type='text', name='to', value='', id='to')
+		br
+		label Subject 
+		input(type='text', name='subject', id='subject')
+		br
+		label(for='textarea', style='vertical-align: middle;') Message
+		textarea(type='text', name='message', id='message', rows='10', cols='40' placeholder='type your email message here')
+		br
+		button(type='submit')#send-form.btn.btn-primary
+			i.icon-search.icon-envelope(style='padding-right: 5px;')
+			| Send
+	br
+	table#journalists_table.table-hover.no-footer.table-striped(style='width: 100%;')
 	include modals/alert
 	include modals/confirm
 	include modals/form-errors
@@ -27,5 +48,5 @@ block scripts
 	script(src='/js/application.js')
 	script(src='/js/plugins.js')
 	script(src='/js/views/contact-journalists.js')
-	script(src='/js/form-validators/outletsValidator.js')
+	script(src='/js/form-validators/journalistsValidator.js')
 	script(src='/js/jquery.dataTables.min.js')

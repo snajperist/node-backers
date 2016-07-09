@@ -3,7 +3,7 @@ $(document).ready(function(){
 
 // main login form //
 
-	var bv = new OutletsValidator();
+	var jv = new JournalistsValidator();
 
 	$('#journalists-form').ajaxForm({
 		beforeSubmit : function(formData, jqForm, options){
@@ -11,8 +11,8 @@ $(document).ready(function(){
 			return true;
 		},
 		success	: function(responseText, status, xhr, $form){
-			if (status == 'success' && jQuery.type(responseText) === "array") { 
-				var tbl_thead = '<thead><tr><th>Name</th><th></th><th>Twitter</th><th>Email</th><th>Phone</th><th>Category</th><th>Description</th></tr></thead>';
+			if(status == 'success' && jQuery.type(responseText) === "array") { 
+				var tbl_thead = '<thead><tr><th>Name</th><th></th><th>Twitter</th><th>Email</th><th>Phone</th><th>Category</th><th>Description</th><th>Contact</th></tr></thead>';
 				var tbl_body = document.createElement("tbody");
 		    	var odd_even = false;
 		    	$.each(responseText, function() {
@@ -46,6 +46,9 @@ $(document).ready(function(){
 	        			
 	        		cell = tbl_row.insertCell();
 	        		cell.innerHTML = this['desc'].toString().substring(0,150) + (this['desc'].toString().length >= 90 ? '... ' : '');
+	        		
+	        		cell = tbl_row.insertCell();
+	        		cell.innerHTML = '<a target="_blank"><button type="submit" class="btn btn-primary"><i style="padding-right: 5px;" class="icon-search icon-envelope"></i>Contact</button></a>';
 
 	    	 		odd_even = !odd_even;               
 		    	})
@@ -65,6 +68,16 @@ $(document).ready(function(){
 				
 			}
 			$('.spinner2').hide();
+			
+			$('#journalists_table a').click(function(event) {
+				$('#send-form').removeClass('hidden');
+				$('#to').val('');
+				var columns = $(event.target).parent().parent().parent().children();
+				$('#to').val(columns.eq(3).text());
+				window.scrollTo(0,$("#send-form").offset().top-50);
+				$('#to').val(columns.eq(3).text());
+				$("#subject").focus();
+			});
 		},
 		error : function(e){
 			$('.spinner2').hide();
@@ -72,5 +85,5 @@ $(document).ready(function(){
 	}); 	
 	
 	setTimeout(function() { $('#journalists-form button').trigger('click'); }, 1200);
-	setTimeout(function() { if(window.location.href.toString().indexOf('id=') != -1) { bv.showContacted(); } }, 1800);
+	//setTimeout(function() { if(window.location.href.toString().indexOf('id=') != -1) { jv.showContacted(); } }, 1800);
 })

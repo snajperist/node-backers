@@ -72,7 +72,28 @@ exports.manualLogin = function(email, pass, callback)
 	});
 }
 
-/* record insertion, update & deletion methods */
+exports.resetPassword = function(email, callback)
+{
+	accounts.findOne({email:email}, function(e, o) {
+		if(o == null)
+			callback('Email address is not in use', null);
+		else {
+			var pass = generateSalt();
+			saltAndHash(pass, function(hash) {
+				sendEmail('BackersLab Password Reset', 'noreply@backerslab.com', email, 'BackersLab Password Reset', 'Your new BackersLab password is:\n' + pass, function(err) {
+					if(err) callback('Can\'t reset password. Please contact support', null);
+					else {
+						o.pass = hash;
+						accounts.save(o, {safe: true}, function(err) {
+							if(err) callback('Can\'t reset password. Please contact support', null);
+							else callback(null, 'New password sent to your email address.\nRedirecting to login page');
+						});
+					}
+				});
+			});
+		}
+	});
+}
 
 exports.addNewAccount = function(newData, callback)
 {
@@ -107,7 +128,7 @@ exports.updateAccount = function(newData, callback)
 					else callback(null, o);
 				});
 			} else {
-				saltAndHash(newData.pass, function(hash){
+				saltAndHash(newData.pass, function(hash) {
 					o.pass = hash;
 					accounts.save(o, {safe: true}, function(err) {
 						if (err) callback(err);
@@ -434,23 +455,18 @@ exports.revealJournalist = function(q, callback)
 				    				v.user 		= q.user;
 				    				v.journalist= q.journalist;
 				    				
-				    				sendEmail(q.details.name, q.details.email, v.email, q.details.subject, q.details.message, function(err) {
-				    					if(err)
-							    			callback(err, null);
-							    		else
-						    				contacts.save(v, { safe: true, upsert: true }, function(err) {
+				    				contacts.save(v, { safe: true, upsert: true }, function(err) {
+										if(err)
+						    				callback(err, null);	    				
+										else {
+						    				accounts.update( { _id:require('mongodb').ObjectID(q.user) }, { $inc: { credits:-1} }, function(err) {
 												if(err)
 								    				callback(err, null);	    				
-												else {
-								    				accounts.update( { _id:require('mongodb').ObjectID(q.user) }, { $inc: { credits:-1} }, function(err) {
-														if(err)
-										    				callback(err, null);	    				
-														else
-										    				callback(null, o);	    				
-													});
-								    			}
+												else
+								    				callback(null, o);	    				
 											});
-				    				});
+						    			}
+									});
 				    			}
 				    			else
 				    				callback(e, null);
@@ -581,24 +597,19 @@ exports.revealOutlet = function(q, callback)
 				    			if(v) {
 				    				v.user 	= q.user;
 				    				v.outlet= q.outlet;
-				    				console.log(q.details.name + ' ' + q.details.email + ' ' + v.email + '\n' + q.details.subject + '\n' + q.details.message)
-				    				sendEmail(q.details.name, q.details.email, v.email, q.details.subject, q.details.message, function(err) {
-				    					if(err)
-							    			callback(err, null);
-							    		else
-						    				ocontacts.save(v, { safe: true, upsert: true }, function(err) {
+				    				
+				    				ocontacts.save(v, { safe: true, upsert: true }, function(err) {
+										if(err)
+						    				callback(err, null);	    				
+										else {
+						    				accounts.update( { _id:require('mongodb').ObjectID(q.user) }, { $inc: { credits:-1} }, function(err) {
 												if(err)
 								    				callback(err, null);	    				
-												else {
-								    				accounts.update( { _id:require('mongodb').ObjectID(q.user) }, { $inc: { credits:-1} }, function(err) {
-														if(err)
-										    				callback(err, null);	    				
-														else
-										    				callback(null, o);	    				
-													});
-								    			}
+												else
+								    				callback(null, o);	    				
 											});
-				    				});
+						    			}
+									});
 				    			}
 				    			else
 				    				callback(e, null);

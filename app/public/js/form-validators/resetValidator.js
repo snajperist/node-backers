@@ -1,37 +1,28 @@
 
 function ResetValidator(){
 
-// modal window to allow users to reset their password //
-	this.setPassword = $('#set-password');
-	this.setPassword.modal({ show : false, keyboard : false, backdrop : 'static' });
-	this.setPasswordAlert = $('#set-password .alert');
-}
+// bind a simple alert window to this controller to display any errors //
 
-ResetValidator.prototype.validatePassword = function(s)
-{
-	if (s.length >= 6){
-		return true;
-	}	else{
-		this.showAlert('Password Should Be At Least 6 Characters');
-		return false;
+	this.loginErrors = $('#modal-alert');
+	this.loginErrors.modal({ show : false, keyboard : true, backdrop : true });
+
+	this.showResetError = function(t, m)
+	{
+		$('#modal-alert .modal-header h4').text(t);
+		$('#modal-alert .modal-body p').text(m);
+		this.loginErrors.modal('show');
 	}
 }
 
-ResetValidator.prototype.showAlert = function(m)
+ResetValidator.prototype.validateForm = function()
 {
-	this.setPasswordAlert.attr('class', 'alert alert-error');
-	this.setPasswordAlert.html(m);
-	this.setPasswordAlert.show();
-}
-
-ResetValidator.prototype.hideAlert = function()
-{
-	this.setPasswordAlert.hide();
-}
-
-ResetValidator.prototype.showSuccess = function(m)
-{
-	this.setPasswordAlert.attr('class', 'alert alert-success');
-	this.setPasswordAlert.html(m);
-	this.setPasswordAlert.fadeIn(500);
+	if ($('#email-tf').val() == ''){
+		this.showResetError('Whoops!', 'Please enter a valid email');
+		return false;
+	}	else if ($('#pass-tf').val() == ''){
+		this.showResetError('Whoops!', 'Please enter a valid password');
+		return false;
+	}	else {
+		return true;
+	}
 }

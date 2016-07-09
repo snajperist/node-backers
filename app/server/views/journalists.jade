@@ -2,11 +2,16 @@ extends panel
 
 block content
 	form( method="post")#journalists-form.well
-		h1 Journalists Search
+		h1= title
 		p#sub1.subheading
 			span Find your audience among 
-			span= user.journalistsCount
-			span  journalists in our database
+			if title == 'Outlets Search'
+				span= user.outletsCount 
+				span  outlets
+			else if title == 'Journalists Search'
+				span= user.journalistsCount
+				span  journalists
+			span  in our database
 		label Keywords
 		input(type='text', name='keyword', id='keyword' placeholder='e.g. Fashion or Freelance')
 		div.clear-fix

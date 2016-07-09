@@ -39,6 +39,31 @@ module.exports = function(app) {
 	});
 
 
+	// reset password page //
+	app.get('/reset-password', function(req, res) {
+		if(req.cookies.email == undefined || req.cookies.pass == undefined)
+			res.render('reset-password', { title: 'Reset your account password' });
+		else {
+			AM.autoLogin(req.cookies.email, req.cookies.pass, function(o) {
+				if(o!= null) {
+				    req.session.user = o;
+					res.redirect('/dashboard');
+				} else
+					res.render('reset-password', { title: 'Reset your account password' });
+			});
+		}
+	});
+	
+	app.post('/reset-password', function(req, res){
+		AM.resetPassword(req.body['email'], function(e, o){
+			if(!o)
+				res.status(400).send(e);
+			else
+				res.status(200).send(o);
+		});
+	});
+	
+	
 	// logged-in user homepage //
 	app.get('/dashboard', function(req, res) {
 		if(req.session.user == null)
@@ -275,13 +300,17 @@ module.exports = function(app) {
 		if(req.session.user == null)
 				res.redirect('/');
 		else {
-				AM.returnAllContactJournalists({ user:req.session.user._id, name:req.body['name'] }, function(e, o){
+			if(req.body['type'] == 'search')
+				AM.returnAllContactJournalists({ user:req.session.user._id, name:req.body['name'] }, function(e, o) {
 					if(!o)
 						res.status(400).send(e);
 					else
 						res.send(o);
 				})
+			else if(req.body['type'] == 'send') {
+				res.status(400).send('Sending is not enabled');
 			}
+		}
 	});
 	
 	
@@ -300,7 +329,7 @@ module.exports = function(app) {
 		if(req.session.user == null)
 			res.redirect('/');
 		else {
-			res.render('outlets', {
+			res.render('journalists', {
 				title : 'Outlets Search',
 				udata : req.session.user
 			});
@@ -328,7 +357,7 @@ module.exports = function(app) {
 						if(e == '0 credits')
 							res.redirect('/credits');
 					} else {
-						res.render('contact-outlets', {
+						res.render('contact-journalists', {
 							title : 'Contact Outlets',
 							udata : req.session.user
 						});
@@ -336,7 +365,7 @@ module.exports = function(app) {
 				})
 			}
 			else {
-				res.render('contact-outlets', {
+				res.render('contact-journalists', {
 					title : 'Contact Outlets',
 					udata : req.session.user
 				});
@@ -346,15 +375,19 @@ module.exports = function(app) {
 
 	app.post('/contact-outlets', function(req, res) {
 		if(req.session.user == null)
-				res.redirect('/');
+			res.redirect('/');
 		else {
-				AM.returnAllContactOutlets({ user:req.session.user._id, name:req.body['name'] }, function(e, o){
+			if(req.body['type'] == 'search')
+				AM.returnAllContactOutlets({ user:req.session.user._id, name:req.body['name'] }, function(e, o) {
 					if(!o)
 						res.status(400).send(e);
 					else
 						res.send(o);
 				})
+			else if(req.body['type'] == 'send') {
+				res.status(400).send('Sending is not enabled');
 			}
+		}
 	});
 	
 	

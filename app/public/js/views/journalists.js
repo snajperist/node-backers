@@ -17,7 +17,7 @@ $(document).ready(function(){
 			}
 		},
 		success	: function(responseText, status, xhr, $form){
-			if (status == 'success') { 
+			if (status == 'success') {
 				var tbl_thead = '<thead><tr><th>Name</th><th></th><th>Category</th><th>Description</th><th>Contact</th></tr></thead>';
 				var tbl_body = document.createElement("tbody");
 		    	var odd_even = false;
@@ -45,9 +45,12 @@ $(document).ready(function(){
 	        		cell.innerHTML = (this['desc'].toString().substring(0,190) + (this['desc'].toString().length >= 190 ? '... ' : '')).replace(/([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9._-]+[a-z])/g, '*****@****.***').replace(/@[a-zA-Z0-9._-]+/g, '@******').replace(/\.com\/[a-zA-Z0-9._-]+/g, '.com/*****');
 	        		
 	        		var	cell = tbl_row.insertCell();
-	        		cell.innerHTML = '<a target="_blank" href="contact-journalists?id=' + this['_id'] + '"><button type="submit" class="btn btn-primary"><i style="padding-right: 5px;" class="icon-search icon-magnifier"></i>Get contact details</button></a>';
+	        		if(window.location.href.toString().indexOf('journalists') != -1)
+	        			cell.innerHTML = '<a target="_blank" href="contact-journalists?id=' + this['_id'] + '"><button type="submit" class="btn btn-primary"><i style="padding-right: 5px;" class="icon-search icon-magnifier"></i>Get contact details</button></a>';
+	        		else
+	        			cell.innerHTML = '<a target="_blank" href="contact-outlets?id=' + this['_id'] + '"><button type="submit" class="btn btn-primary"><i style="padding-right: 5px;" class="icon-search icon-magnifier"></i>Get contact details</button></a>';
 
-	    	 		odd_even = !odd_even;               
+	    	 		odd_even = !odd_even;
 		    	})
 		    	$("#journalists_table").empty().append(tbl_thead).append(tbl_body);
 
@@ -61,6 +64,7 @@ $(document).ready(function(){
 			        bFilter: false
 			    } );
 			}
+			
 			$('.spinner2').hide();
 			grecaptcha.reset();
 		},
