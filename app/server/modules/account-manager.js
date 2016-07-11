@@ -651,10 +651,10 @@ exports.creditsCount = function(user, callback)
 
 exports.emailContact = function(q, callback)
 {
-	accounts.findOne( { user:q.user }, function(e, u) {
+	accounts.findOne( { email:q.email }, function(e, u) {
 		if(u && u.credits != undefined) {
 			if(parseInt(u.credits) > 0) {
-				accounts.update( { user:q.user }, { $inc: { credits:-1} }, function(err) {
+				accounts.update( { email:q.email }, { $inc: { credits:-1} }, function(err) {
 					if(err)
 	    				callback(err, null);	    				
 					else {
