@@ -654,7 +654,7 @@ exports.emailContact = function(q, callback)
 	accounts.findOne( { user:q.user }, function(e, u) {
 		if(u && u.credits != undefined) {
 			if(parseInt(u.credits) > 0) {
-				accounts.update( { _id:require('mongodb').ObjectID(u._id) }, { $inc: { credits:-1} }, function(err) {
+				accounts.update( { user:q.user }, { $inc: { credits:-1} }, function(err) {
 					if(err)
 	    				callback(err, null);	    				
 					else {

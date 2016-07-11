@@ -385,8 +385,6 @@ module.exports = function(app) {
 						res.status(200).send(o);
 				})
 			else if(req.body['type'] == 'send') {
-				//res.status(400).send('Sending is not enabled');
-				console.log(req.session.user.name + '\n' + req.session.user.email + '\n' + req.body['to'] + '\n' + req.body['subject'] + '\n' + req.body['message']);
 				AM.emailContact({ user:req.session.user.name, email:req.session.user.email, to:req.body['to'], subject:req.body['subject'], message:req.body['message']}, function(err) {
 					if(err)
 						res.status(400).send(err);
