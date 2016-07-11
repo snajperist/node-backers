@@ -1,14 +1,14 @@
 
 $(document).ready(function(){
 	
-	var bv = new JournalistsValidator();
+	var jv = new JournalistsValidator();
 	var pl = false;
 
 // main login form //
 
 	$('#journalists-form').ajaxForm({
 		beforeSubmit : function(formData, jqForm, options) {
-			if (bv.validateForm() == false || bv.validateCaptcha(pl) == false) {
+			if (jv.validateForm() == false || jv.validateCaptcha(pl) == false) {
 				return false;
 			} else {
 				pl = true;
@@ -71,7 +71,7 @@ $(document).ready(function(){
 		error : function(e){
 			$('.spinner2').hide();
 			grecaptcha.reset();
-			bv.showJournalistsError('Search Failure', 'Please check search inputs');
+			jv.showJournalistsError('Search Failure', 'Please check search inputs');
 		}
 	});
 	setTimeout(function() { $('#journalists-form button').trigger('click'); }, 1200);

@@ -4,6 +4,7 @@ $(document).ready(function(){
 // main login form //
 
 	var jv = new JournalistsValidator();
+	var ev = new EmailValidator();
 
 	$('#journalists-form').ajaxForm({
 		beforeSubmit : function(formData, jqForm, options){
@@ -83,6 +84,31 @@ $(document).ready(function(){
 			$('.spinner2').hide();
 		}
 	}); 	
+	
+		
+	$('#send-form').ajaxForm({
+		beforeSubmit : function(formData, jqForm, options) {
+			if(!ev.validateEmail($('#to').val())) {
+				jv.showJournalistsError('Incorrect Email Address', 'Please check email address');
+				return false;
+			}
+	
+			if(jv.validateSendFormSubject() == false || jv.validateSendFormMessage() == false)
+				return false;
+			else {
+				$('.spinner2').show();
+				return true;
+			}
+		},
+		success	: function(responseText, status, xhr, $form) {
+			jv.showContacted();
+			$('.spinner2').hide();
+		},
+		error : function(e) {
+			$('.spinner2').hide();
+			jv.showJournalistsError('Sending Failed', e.responseText + ' Please check inputs or contact support.');
+		}
+	});
 	
 	setTimeout(function() { $('#journalists-form button').trigger('click'); }, 1200);
 	//setTimeout(function() { if(window.location.href.toString().indexOf('id=') != -1) { jv.showContacted(); } }, 1800);

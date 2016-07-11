@@ -649,6 +649,32 @@ exports.creditsCount = function(user, callback)
 	});
 }
 
+exports.emailContact = function(q, callback)
+{
+	accounts.findOne( { user:q.user }, function(e, u) {
+		if(u && u.credits != undefined) {
+			if(parseInt(u.credits) > 0) {
+				accounts.update( { _id:require('mongodb').ObjectID(u._id) }, { $inc: { credits:-1} }, function(err) {
+					if(err)
+	    				callback(err, null);	    				
+					else {
+						sendEmail(q.user, q.email, q.to, q.subject, q.message, function(err) {
+							if(err)
+								callback('Can\'t send an email.', null);
+							else 
+								callback(null, 'Success');
+						});
+					}
+				});
+			}
+			else
+				callback('You have 0 credits.', null);
+		}
+		else
+			callback('Can\'t find user.', null);	    				
+	});
+}
+
 var sendEmail = function(name, replyto, email, subject, message, callback)
 {
 	var api_key = 'key-d86f8596f89c9aedbb7ca97abe2286e4';
