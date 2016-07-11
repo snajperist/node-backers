@@ -308,7 +308,13 @@ module.exports = function(app) {
 						res.send(o);
 				})
 			else if(req.body['type'] == 'send') {
-				res.status(400).send('Sending is not enabled');
+				AM.emailContact({ user:req.session.user.name, email:req.session.user.email, to:req.body['to'], subject:req.body['subject'], message:req.body['message']}, function(err) {
+					if(err)
+						res.status(400).send(err);
+					else {
+						res.status(200).send('Success');
+					}
+				});
 			}
 		}
 	});
