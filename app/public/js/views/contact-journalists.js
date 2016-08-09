@@ -13,7 +13,7 @@ $(document).ready(function(){
 		},
 		success	: function(responseText, status, xhr, $form){
 			if(status == 'success' && jQuery.type(responseText) === "array") { 
-				var tbl_thead = '<thead><tr><th>Name</th><th></th><th>Twitter</th><th>Email</th><th>Phone</th><th>Category</th><th>Description</th><th>Contact</th></tr></thead>';
+				var tbl_thead = '<thead><tr><th>Name</th><th></th><th>Country</th><th>Twitter</th><th>Email</th><th>Phone</th><th>Category</th><th>Description</th><th>Contact</th></tr></thead>';
 				var tbl_body = document.createElement("tbody");
 		    	var odd_even = false;
 		    	$.each(responseText, function() {
@@ -25,6 +25,9 @@ $(document).ready(function(){
 	        		
 	        		cell = tbl_row.insertCell();
 	        		cell.innerHTML = this['name'].toString().substring(0,30) + (this['name'].toString().length >= 30 ? '... ' : '');
+	        		
+	        		cell = tbl_row.insertCell();
+	        		cell.innerHTML = (this['country'] == undefined ? '' : this['country'].toString());
 	        		
 	        		cell = tbl_row.insertCell();
 	        		cell.innerHTML = this['twitter'].toString();
@@ -74,9 +77,9 @@ $(document).ready(function(){
 				$('#send-form').removeClass('hidden');
 				$('#to').val('');
 				var columns = $(event.target).parent().parent().parent().children();
-				$('#to').val(columns.eq(3).text());
+				$('#to').val(columns.eq(4).text());
 				window.scrollTo(0,$("#send-form").offset().top-50);
-				$('#to').val(columns.eq(3).text());
+				$('#to').val(columns.eq(4).text());
 				$("#subject").focus();
 			});
 		},

@@ -18,7 +18,7 @@ $(document).ready(function(){
 		},
 		success	: function(responseText, status, xhr, $form){
 			if (status == 'success') {
-				var tbl_thead = '<thead><tr><th>Name</th><th></th><th>Category</th><th>Description</th><th>Contact</th></tr></thead>';
+				var tbl_thead = '<thead><tr><th>Name</th><th></th><th>Country</th><th>Category</th><th>Description</th><th>Contact</th></tr></thead>';
 				var tbl_body = document.createElement("tbody");
 		    	var odd_even = false;
 		    	$.each(responseText, function() {
@@ -27,9 +27,12 @@ $(document).ready(function(){
 
 	        		var cell = tbl_row.insertCell();
 	        		cell.innerHTML = '<img src="https://twitter.com/' + this['twitter'].toString() + '/profile_image?size=normal" onerror="this.src=\'/image/twitter-default.png\'" style="margin: 2px 5px 2px 0px;">';
-	        		
+
 	        		cell = tbl_row.insertCell();
 	        		cell.innerHTML = this['name'].toString().substring(0,30) + (this['name'].toString().length >= 30 ? '... ' : '');
+	        		
+	        		cell = tbl_row.insertCell();
+	        		cell.innerHTML = (this['country'] == undefined ? '' : this['country'].toString());
 
 	        		cell = tbl_row.insertCell();
 	        		if(Object.prototype.toString.call(this['category']) !== '[object Array]')

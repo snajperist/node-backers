@@ -33,10 +33,11 @@ exports.autoLogin = function(email, pass, callback)
 			backersCount(function(n) {
 				o.backersCount = n;
 				journalistsCount(function(m) {
-					o.journalistsCount = m;
+					o.journalistsCount = parseInt(m);
 					outletsCount(function(p) {
-						o.outletsCount = p;
-						callback(o);
+						o.outletsCount = parseInt(p);
+						o.totalCount = o.journalistsCount + o.outletsCount;
+						callback(null, o);
 					});
 				});
 			});
@@ -57,9 +58,10 @@ exports.manualLogin = function(email, pass, callback)
 					backersCount(function(n) {
 						o.backersCount = n;
 						journalistsCount(function(m) {
-							o.journalistsCount = m;
+							o.journalistsCount = parseInt(m);
 							outletsCount(function(p) {
-								o.outletsCount = p;
+								o.outletsCount = parseInt(p);
+								o.totalCount = o.journalistsCount + o.outletsCount;
 								callback(null, o);
 							});
 						});
@@ -313,10 +315,7 @@ exports.returnAllBackers = function(q, callback)
 exports.saveBackers = function(bs, callback)
 {
 	if(isType('Array', bs) && bs.length > 0 && isType('Object', bs[0])) {
-		var total 		= 0;
-		var nMatched 	= 0;
-		var nUpserted 	= 0;
-		var nModified 	= 0;
+		var total = 0;
 		bs.forEach(function(b) {
 			backers.find({ url: b.url }).toArray(function(e, o) {
 			    if(e)
@@ -330,17 +329,10 @@ exports.saveBackers = function(bs, callback)
 
 				    backers.update({ url: b.url }, b, { upsert: true }, function (e, result) {
 						total++;
-						if(e) {
+						if(e)
 							callback(e, null);
-						}
-						else {
-							/*nMatched 	+= parseInt(result.nMatched);
-							nUpserted 	+= parseInt(result.nUpserted);
-							nModified 	+= parseInt(result.nModified);*/
-						}
-						if(total == bs.length)
+						else if(total == bs.length)
 							callback(null, 'Updated ' + bs.length + ' documents');
-							//callback(null, 'Inserted ' + bs.length + ' documents\nnMatched' + nMatched + '\nnUpserted' + nUpserted + '\nnModified' + nModified);
 					});
 			    }
 		    });
@@ -376,36 +368,10 @@ var backersCount = function(callback) {
 
 /* journalists database methods */
 
-
-exports.returnAllJournalists = function(q, callback)
-{
-	journalists.find( { $or: [ { name:{'$regex':q.keyword} }, { category:{'$regex':q.keyword} }, { desc:{'$regex':q.keyword} } ] }, { email: 0, phone: 0 } ).limit(1000).sort( { $natural: -1 } ).toArray(function(e, o) {
-	    if(e)
-	      callback(e, null);
-	    else
-	      callback(null, o);
-    });
-}
-
-
-exports.returnAllContactJournalists = function(q, callback)
-{
-	contacts.find( { user:q.user, name:{'$regex':q.name} }, { _id: 0 } ).limit(10000).sort( { $natural: -1 } ).toArray(function(e, o) {
-	    if(e)
-	      callback(e, null);
-	    else
-	      callback(null, o);
-    });
-}
-
-
 exports.saveJournalists = function(js, callback)
 {
 	if(isType('Array', js) && js.length > 0 && isType('Object', js[0])) {
-		var total 		= 0;
-		var nMatched 	= 0;
-		var nUpserted 	= 0;
-		var nModified 	= 0;
+		var total = 0;
 		js.forEach(function(j) {
 			journalists.find({ name: j.name }).toArray(function(e, o) {
 			    if(e)
@@ -419,17 +385,10 @@ exports.saveJournalists = function(js, callback)
 
 				    journalists.update({ name: j.name }, j, { upsert: true }, function (e, result) {
 						total++;
-						if(e) {
+						if(e)
 							callback(e, null);
-						}
-						else {
-							/*nMatched 	+= parseInt(result.nMatched);
-							nUpserted 	+= parseInt(result.nUpserted);
-							nModified 	+= parseInt(result.nModified);*/
-						}
-						if(total == js.length)
+						else if(total == js.length)
 							callback(null, 'Updated ' + js.length + ' documents');
-							//callback(null, 'Inserted ' + bs.length + ' documents\nnMatched' + nMatched + '\nnUpserted' + nUpserted + '\nnModified' + nModified);
 					});
 			    }
 		    });
@@ -515,40 +474,58 @@ var journalistsCount = function(callback) {
     });
 }
 
+/* press */
+exports.returnAllPressProfiles = function(q, callback)
+{
+	if(q.type == 'journalists')
+		var dbPress = journalists;
+	else if(q.type == 'outlets')
+		var dbPress = outlets;
+	else
+		callback('Press database not selected', null);
+		
+	if(q.country == 'Please select a country')
+		dbPress.find( { $or: [ { name:{'$regex':q.keyword} }, { category:{'$regex':q.keyword} }, { desc:{'$regex':q.keyword} } ] }, { email: 0, phone: 0 } ).limit(1000).sort( { $natural: -1 } ).toArray(function(e, o) {
+		    if(e)
+		      callback(e, null);
+		    else
+		      callback(null, o);
+	    });
+	else
+		dbPress.find( { $and: [ { $or: [ { name:{'$regex':q.keyword} }, { category:{'$regex':q.keyword} }, { desc:{'$regex':q.keyword} } ] },  { country:{'$regex':q.country} } ] }, { email: 0, phone: 0 } ).limit(1000).sort( { $natural: -1 } ).toArray(function(e, o) {
+		    if(e)
+		      callback(e, null);
+		    else
+		      callback(null, o);
+	    });
+}
+
+
+exports.returnAllPressContacts = function(q, callback)
+{
+	if(q.type == 'journalists')
+		var dbPress = contacts;
+	else if(q.type == 'outlets')
+		var dbPress = ocontacts;
+	else
+		callback('Press database not selected', null);
+
+	dbPress.find( { user:q.user, name:{'$regex':q.name} }, { _id: 0 } ).limit(10000).sort( { $natural: -1 } ).toArray(function(e, o) {
+	    if(e)
+	      callback(e, null);
+	    else
+	      callback(null, o);
+    });
+}
+
+
 
 
 /* outlets database methods */
-
-
-exports.returnAllOutlets = function(q, callback)
-{
-	outlets.find( { $or: [ { name:{'$regex':q.keyword} }, { category:{'$regex':q.keyword} }, { desc:{'$regex':q.keyword} } ] }, { email: 0, phone: 0 } ).limit(1000).sort( { $natural: -1 } ).toArray(function(e, o) {
-	    if(e)
-	      callback(e, null);
-	    else
-	      callback(null, o);
-    });
-}
-
-
-exports.returnAllContactOutlets = function(q, callback)
-{
-	ocontacts.find( { user:q.user, name:{'$regex':q.name} }, { _id: 0 } ).limit(10000).sort( { $natural: -1 } ).toArray(function(e, o) {
-	    if(e)
-	      callback(e, null);
-	    else
-	      callback(null, o);
-    });
-}
-
-
 exports.saveOutlets = function(js, callback)
 {
 	if(isType('Array', js) && js.length > 0 && isType('Object', js[0])) {
-		var total 		= 0;
-		var nMatched 	= 0;
-		var nUpserted 	= 0;
-		var nModified 	= 0;
+		var total = 0;
 		js.forEach(function(j) {
 			outlets.find({ name: j.name }).toArray(function(e, o) {
 			    if(e)
@@ -562,17 +539,10 @@ exports.saveOutlets = function(js, callback)
 
 				    outlets.update({ name: j.name }, j, { upsert: true }, function (e, result) {
 						total++;
-						if(e) {
+						if(e)
 							callback(e, null);
-						}
-						else {
-							/*nMatched 	+= parseInt(result.nMatched);
-							nUpserted 	+= parseInt(result.nUpserted);
-							nModified 	+= parseInt(result.nModified);*/
-						}
-						if(total == js.length)
+						else if(total == js.length)
 							callback(null, 'Updated ' + js.length + ' documents');
-							//callback(null, 'Inserted ' + bs.length + ' documents\nnMatched' + nMatched + '\nnUpserted' + nUpserted + '\nnModified' + nModified);
 					});
 			    }
 		    });

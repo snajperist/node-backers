@@ -249,18 +249,19 @@ module.exports = function(app) {
 	});
 	
 	app.get('/journalists', function(req, res) {
-		if (req.session.user == null)
+		if(req.session.user == null)
 			res.redirect('/');
 		else {
 			res.render('journalists', {
 				title : 'Journalists Search',
+				countries : CT,
 				udata : req.session.user
 			});
 		}
 	});
 	
 	app.post('/journalists', function(req, res) {
-		AM.returnAllJournalists( { keyword:req.body.keyword}, function(e, o){
+		AM.returnAllPressProfiles( { type:'journalists', keyword:req.body.keyword, country:req.body.country }, function(e, o) {
 			if(!o)
 				res.status(400).send(e);
 			else
@@ -301,7 +302,7 @@ module.exports = function(app) {
 				res.redirect('/');
 		else {
 			if(req.body['type'] == 'search')
-				AM.returnAllContactJournalists({ user:req.session.user._id, name:req.body['name'] }, function(e, o) {
+				AM.returnAllPressContacts({ type:'journalists', user:req.session.user._id, name:req.body['name'] }, function(e, o) {
 					if(!o)
 						res.status(400).send(e);
 					else
@@ -337,13 +338,14 @@ module.exports = function(app) {
 		else {
 			res.render('journalists', {
 				title : 'Outlets Search',
+				countries : CT,
 				udata : req.session.user
 			});
 		}
 	});
 	
 	app.post('/outlets', function(req, res) {
-		AM.returnAllOutlets( { keyword:req.body.keyword}, function(e, o){
+		AM.returnAllPressProfiles( { type:'outlets', keyword:req.body.keyword, country:req.body.country }, function(e, o){
 			if(!o)
 				res.status(400).send(e);
 			else
@@ -384,7 +386,7 @@ module.exports = function(app) {
 			res.redirect('/');
 		else {
 			if(req.body['type'] == 'search')
-				AM.returnAllContactOutlets({ user:req.session.user._id, name:req.body['name'] }, function(e, o) {
+				AM.returnAllPressContacts({ type:'outlets', user:req.session.user._id, name:req.body['name'] }, function(e, o) {
 					if(!o)
 						res.status(400).send(e);
 					else
