@@ -1,6 +1,8 @@
-var CT = require('./modules/country-list');
-var AM = require('./modules/account-manager');
-var EM = require('./modules/email-dispatcher');
+var CT			= require('./modules/country-list');
+var AM			= require('./modules/account-manager');
+var EM			= require('./modules/email-dispatcher');
+var multiparty	= require('multiparty');
+
 
 module.exports = function(app) {
 
@@ -142,9 +144,7 @@ module.exports = function(app) {
 				name 	: req.body['name'],
 				email 	: req.body['email'],
 				pass	: req.body['pass'],
-				country : req.body['country'],
-				subject : req.body['subject'],
-				message : req.body['message']
+				country : req.body['country']
 			}, function(e, o) {
 				if(e)
 					res.status(400).send('error-updating-account');
@@ -308,18 +308,25 @@ module.exports = function(app) {
 					else
 						res.send(o);
 				})
-			else if(req.body['type'] == 'send') {
-				AM.emailContact({ user:req.session.user.name, email:req.session.user.email, to:req.body['to'], subject:req.body['subject'], message:req.body['message']}, function(err) {
-					if(err)
-						res.status(400).send(err);
+			else {
+				var form = new multiparty.Form({ uploadDir: __dirname + '/tmp', maxFilesSize: 10485760 });
+				form.parse(req, function(e, fields, files) {
+					if(e)
+						res.status(400).send(e);
 					else {
-						res.status(200).send('Success');
+						AM.emailContact({ session:req.session.user,user:req.session.user.name, email:req.session.user.email, to:fields.to[0], subject:fields.subject[0], message:fields.message[0], bcc:(fields.bcc == undefined ? 'no' : 'yes'), attachment:(files.attachment == undefined ? '' : files.attachment[0].path) }, function(e, o) {
+							if(e)
+								res.status(400).send(e);
+							else {
+								req.session.user = o;
+								res.status(200).send('Success');
+							}
+						});
 					}
-				});
+			    });
 			}
 		}
 	});
-	
 	
 	
 	// save outlets
@@ -392,14 +399,22 @@ module.exports = function(app) {
 					else
 						res.status(200).send(o);
 				})
-			else if(req.body['type'] == 'send') {
-				AM.emailContact({ user:req.session.user.name, email:req.session.user.email, to:req.body['to'], subject:req.body['subject'], message:req.body['message']}, function(err) {
-					if(err)
-						res.status(400).send(err);
+			else {
+				var form = new multiparty.Form({ uploadDir: __dirname + '/tmp', maxFilesSize: 10485760 });
+				form.parse(req, function(e, fields, files) {
+					if(e)
+						res.status(400).send(e);
 					else {
-						res.status(200).send('Success');
+						AM.emailContact({ session:req.session.user,user:req.session.user.name, email:req.session.user.email, to:fields.to[0], subject:fields.subject[0], message:fields.message[0], bcc:(fields.bcc == undefined ? 'no' : 'yes'), attachment:(files.attachment == undefined ? '' : files.attachment[0].path) }, function(e, o) {
+							if(e)
+								res.status(400).send(e);
+							else {
+								req.session.user = o;
+								res.status(200).send('Success');
+							}
+						});
 					}
-				});
+			    });
 			}
 		}
 	});

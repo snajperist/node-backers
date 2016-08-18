@@ -20,7 +20,7 @@ block content
 			.bounce2
 			.bounce3
 	br
-	form( method="post")#send-form.well.span6.hidden
+	form(method="post", enctype="multipart/form-data")#send-form.well.span6.hidden
 		h1 Send an email
 		hr
 		input(type='hidden', name='type', value='send')
@@ -28,10 +28,16 @@ block content
 		input(type='text', name='to', value='', id='to')
 		br
 		label Subject 
-		input(type='text', name='subject', id='subject')
+		input(type='text', name='subject', id='subject', value= user.subject)
 		br
 		label(for='textarea', style='vertical-align: middle;') Message
-		textarea(type='text', name='message', id='message', rows='10', cols='40' placeholder='type your email message here')
+		textarea(type='text', name='message', id='message', rows='10', cols='40' placeholder='type your email message here')= user.message
+		br
+		label Bcc
+		input(type='checkbox', name='bcc', id='bcc')
+		br
+		br
+		input(type='file', name='attachment', id='attachment')
 		br
 		button(type='submit')#send-form.btn.btn-primary
 			i.icon-search.icon-envelope(style='padding-right: 5px;')

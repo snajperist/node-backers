@@ -3,6 +3,7 @@ var crypto 		= require('crypto');
 var MongoDB 	= require('mongodb').Db;
 var Server 		= require('mongodb').Server;
 var moment 		= require('moment');
+var fs			= require('fs');
 
 var dbPort 		= 27017;
 var dbHost 		= 'localhost';
@@ -122,8 +123,6 @@ exports.updateAccount = function(newData, callback)
 			o.name 		= newData.name;
 			o.email 	= newData.email;
 			o.country 	= newData.country;
-			o.subject 	= newData.subject;
-			o.message 	= newData.message;
 			if(newData.pass == '') {
 				accounts.save(o, {safe: true}, function(err) {
 					if(err) callback(err);
@@ -621,31 +620,37 @@ exports.creditsCount = function(user, callback)
 
 exports.emailContact = function(q, callback)
 {
-	accounts.findOne( { email:q.email }, function(e, u) {
-		if(u && u.credits != undefined) {
-			if(parseInt(u.credits) > 0) {
-				accounts.update( { email:q.email }, { $inc: { credits:-1} }, function(err) {
-					if(err)
-	    				callback(err, null);	    				
-					else {
-						sendEmail(q.user, q.email, q.to, q.subject, q.message, function(err) {
-							if(err)
-								callback('Can\'t send an email.', null);
-							else 
-								callback(null, 'Success');
-						});
-					}
-				});
+	if(q.subject.length >= 1 && q.subject.length < 512 && q.message.length >= 1 && q.message.length < 10000)
+		accounts.findOne( { email:q.email }, function(e, u) {
+			if(u && u.credits != undefined) {
+				if(parseInt(u.credits) > 0) {
+					accounts.update( { email:q.email }, { $inc: { credits:-1}, $set: { subject:q.subject, message:q.message } }, function(err) {
+						if(err)
+		    				callback(err, null);	    				
+						else { 
+							sendEmail(q.user, q.email, q.to, q.subject, q.message, q.bcc, q.attachment, function(err) {
+								if(err)
+									callback('Can\'t send an email.', null);
+								else {
+									q.session.subject = q.subject;
+									q.session.message = q.message;
+									callback(null, q.session);
+								}
+							});
+						}
+					});
+				}
+				else
+					callback('You have 0 credits.', null);
 			}
 			else
-				callback('You have 0 credits.', null);
-		}
-		else
-			callback('Can\'t find user.', null);	    				
-	});
+				callback('Can\'t find user.', null);	    				
+		});
+	else
+		callback('Something is wrong with subject and message inputs.', null);
 }
 
-var sendEmail = function(name, replyto, email, subject, message, callback)
+var sendEmail = function(name, replyto, email, subject, message, bcc, attachment, callback)
 {
 	var api_key = 'key-d86f8596f89c9aedbb7ca97abe2286e4';
 	var domain	= 'backerslab.com';
@@ -656,12 +661,25 @@ var sendEmail = function(name, replyto, email, subject, message, callback)
 	  from: name + ' <reply@backerslab.com>',
 	  'h:Reply-To': replyto,
 	  subject: subject,
-	  text: message + '\n\n\n_________________________\n\nSent via backerslab.com\nPlease reply directly to this email'
+	  text: message + '\n\n\n____________________\n\nSent via backerslab.com\nPlease reply directly to ' + replyto
 	};
+	
+	if(bcc == 'yes')
+		data.bcc = replyto;
+	
+	if(attachment != '')
+		data.attachment = attachment;
 
 	mailgun.messages().send(data, function(e, body) {
 		if(e)
 			callback(e);
+		else if(attachment != '')
+			fs.unlink(attachment, function(e) {
+				if(e)
+					callback(e);
+				else
+					callback(null);
+			});
 		else
 			callback(null);
 	});

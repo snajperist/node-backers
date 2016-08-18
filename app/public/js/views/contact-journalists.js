@@ -91,7 +91,7 @@ $(document).ready(function(){
 		
 	$('#send-form').ajaxForm({
 		beforeSubmit : function(formData, jqForm, options) {
-			if(!ev.validateEmail($('#to').val())) {
+			if(!ev.validateEmail($('#to').val().trim())) {
 				jv.showJournalistsError('Incorrect Email Address', 'Please check email address');
 				return false;
 			}
@@ -100,6 +100,7 @@ $(document).ready(function(){
 				return false;
 			else {
 				$('.spinner2').show();
+				window.scrollTo(0, 0);
 				return true;
 			}
 		},
