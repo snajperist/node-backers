@@ -82,7 +82,7 @@ module.exports = function(app) {
 
 	// admin panel
 	app.get('/admin', function(req, res) {
-		if (req.session.user != null && req.session.user['status'] == 'Admin') {
+		if(req.session.user != null && req.session.user['status'] == 'Admin') {
 			res.render('admin', {
 				title : 'Admin',
 				countries : CT,
@@ -97,11 +97,11 @@ module.exports = function(app) {
 		if(req.session.user != null && req.session.user['status'] == 'Admin') {
 			if(req.body['type'] == 'search')
 				AM.returnAllAccounts( { name:req.body['name'], email:req.body['email'], country:req.body['country'] }, function(e, o){
-				if(!o)
-					res.status(400).send(e);
-				else
-					res.send(o);
-			});
+					if(!o)
+						res.status(400).send(e);
+					else
+						res.send(o);
+				});
 			else if(req.body['type'] == 'update') {
 				AM.adminUpdateAccount({
 					userid 	: req.body['user-id'],
@@ -124,6 +124,35 @@ module.exports = function(app) {
 	});
 
 
+	
+	// admin settings
+	app.get('/admin-settings', function(req, res) {
+		if(req.session.user != null && req.session.user['status'] == 'Admin') {
+			res.render('admin-settings', {
+				title : 'Admin Settings',
+				countries : CT,
+				udata : req.session.user
+			});
+		}
+	});
+	
+	
+	// admin panel get users
+	app.post('/admin-settings', function(req, res) {
+		if(req.session.user != null && req.session.user['status'] == 'Admin') {
+			if(req.body['type'] == 'backers')
+				AM.updateAdminSettings( { setting:'backers', value:(req.body['backers'] == 'on' ? true : false ) }, function(e, o) {
+					if(!o)
+						res.status(400).send(e);
+					else
+						res.status(200).send(o);
+				});
+			else
+				res.status(400).send('error');
+		}
+	});
+	
+	
 	
 	// logged-in user settings page //
 	app.get('/settings', function(req, res) {
@@ -208,12 +237,15 @@ module.exports = function(app) {
 	});
 	
 	app.post('/backers', function(req, res) {
-		AM.returnAllBackers( { platform:req.body.platform[0], category:req.body.category[0], location:req.body['location'], backed:req.body['backed'], limit:(req.session.user['status'] == 'Admin' || req.session.user['status'] == 'Active' ? 1000 : 5)}, function(e, o){
-			if(!o)
-				res.status(400).send(e);
-			else
-				res.send(o);
-		})
+		if(req.session.user == null)
+			res.redirect('/');
+		else
+			AM.returnAllBackers( { platform:req.body.platform[0], category:req.body.category[0], location:req.body['location'], backed:req.body['backed'], limit:(req.session.user['status'] == 'Admin' || req.session.user['status'] == 'Active' ? 1000 : 5)}, function(e, o){
+				if(!o)
+					res.status(400).send(e);
+				else
+					res.send(o);
+			})
 	});
 
 	

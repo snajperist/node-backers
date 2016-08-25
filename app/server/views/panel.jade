@@ -62,10 +62,11 @@ html(lang='en')
               a(href='dashboard')
                 i.icon-home
                 span Dashboard
-            li.tm.nav
-              a(href='backers')
-                i.icon-people
-                span Backers
+            if user.showBackers == true
+              li.tm.nav
+                a(href='backers')
+                  i.icon-people
+                  span Backers
             li.tm.nav-parent
               a(href='journalists')
                 i.icon-speech
@@ -103,10 +104,16 @@ html(lang='en')
                 i.icon-envelope
                 span Contact
             if user.status == 'Admin'
-              li.tm.nav
+              li.tm.nav-parent
                 a(href='admin')
                   i.icon-ghost
-                  span Admin
+                  span Admin Panel
+                  span.fa.arrow
+                ul.children.collapse
+                  li
+                    a(href='admin') Manage Users
+                  li
+                    a(href='admin-settings') Settings
           .sidebar-widgets(style='margin-bottom: 20px;')
           .sidebar-footer.clearfix(style='')
             a.pull-left.footer-settings(href='settings', data-rel='tooltip', data-placement='top', data-original-title='Settings')

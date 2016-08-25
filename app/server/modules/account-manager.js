@@ -24,23 +24,31 @@ var journalists = db.collection('journalists');
 var contacts 	= db.collection('contacts');
 var outlets 	= db.collection('outlets');
 var ocontacts 	= db.collection('ocontacts');
+var settings 	= db.collection('settings');
 
 /* login validation methods */
 
 exports.autoLogin = function(email, pass, callback)
 {
 	accounts.findOne({email:email}, function(e, o) {
-		if(o && o.pass == pass){
-			backersCount(function(n) {
-				o.backersCount = n;
-				journalistsCount(function(m) {
-					o.journalistsCount = parseInt(m);
-					outletsCount(function(p) {
-						o.outletsCount = parseInt(p);
-						o.totalCount = o.journalistsCount + o.outletsCount;
-						callback(null, o);
+		if(o && o.pass == pass) {
+			settings.findOne({ setting:'backers' }, function(e, u) {
+				if(u) {
+					o.showBackers = u.value;
+					backersCount(function(n) {
+						o.backersCount = n;
+						journalistsCount(function(m) {
+							o.journalistsCount = parseInt(m);
+							outletsCount(function(p) {
+								o.outletsCount = parseInt(p);
+								o.totalCount = o.journalistsCount + o.outletsCount;
+								callback(null, o);
+							});
+						});
 					});
-				});
+				}
+				else
+					callback(null);
 			});
 		}
 		else
@@ -56,16 +64,23 @@ exports.manualLogin = function(email, pass, callback)
 		else {
 			validatePassword(pass, o.pass, function(err, res) {
 				if(res) {
-					backersCount(function(n) {
-						o.backersCount = n;
-						journalistsCount(function(m) {
-							o.journalistsCount = parseInt(m);
-							outletsCount(function(p) {
-								o.outletsCount = parseInt(p);
-								o.totalCount = o.journalistsCount + o.outletsCount;
-								callback(null, o);
+					settings.findOne({ setting:'backers' }, function(e, u) {
+						if(u) {
+							o.showBackers = u.value;
+							backersCount(function(n) {
+								o.backersCount = n;
+								journalistsCount(function(m) {
+									o.journalistsCount = parseInt(m);
+									outletsCount(function(p) {
+										o.outletsCount = parseInt(p);
+										o.totalCount = o.journalistsCount + o.outletsCount;
+										callback(null, o);
+									});
+								});
 							});
-						});
+						}
+						else
+							callback('error-settings');
 					});
 				}
 				else
@@ -183,6 +198,16 @@ exports.updatePassword = function(email, newPass, callback)
 		        accounts.save(o, {safe: true}, callback);
 			});
 		}
+	});
+}
+
+exports.updateAdminSettings = function(newData, callback)
+{
+    settings.update({ setting: newData.setting }, newData, { upsert: true }, function (e, result) {
+		if(e)
+			callback(e, null);
+		else
+			callback(null, 'Updated');
 	});
 }
 

@@ -57,7 +57,7 @@ $(document).ready(function(){
 					
 			    table = $('#accounts_table').DataTable( {
 			        "ordering": false,
-			        "pageLength": 25,
+			        "pageLength": 1000,
 			        "lengthChange": false,
 			        bFilter: false
 			    } );
@@ -91,13 +91,13 @@ $(document).ready(function(){
 	
 	$('#edit-form').ajaxForm({
 		success	: function(responseText, status, xhr, $form){
-			if (status == 'success') { 
+			if(status == 'success') {
 				ac.onUpdate('Updated!', 'Account successfully updated!');
 				$('#edit-form').addClass('hidden');
 				$('#accounts-form button').trigger('click');
 			}
 		},
-		error: function(){
+		error: function() {
 				ac.onUpdate('Error!', 'Error updating!');
 				$('#accounts-form button').trigger('click');
 			}
