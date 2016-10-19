@@ -52,8 +52,10 @@ html(lang='en')
                 button.btn.btn-xs.dropdown-toggle.btn-rounded(type='button', data-toggle='dropdown', data-hover='dropdown', data-close-others='true', data-delay='300')
                   if user.status == 'Admin'
                     i#status_icon.busy
-                  else if user.status == 'Active'
+                  else if user.status == 'Business'
                     i#status_icon.online
+                  else if user.status == 'Crowdfunding'
+                    i#status_icon.turquoise
                   else
                     i#status_icon.away
                   span#status_text= user.status
@@ -62,7 +64,7 @@ html(lang='en')
               a(href='dashboard')
                 i.icon-home
                 span Dashboard
-            if user.showBackers == true
+            if user.status != 'Business'
               li.tm.nav
                 a(href='backers')
                   i.icon-people
@@ -104,16 +106,10 @@ html(lang='en')
                 i.icon-envelope
                 span Contact
             if user.status == 'Admin'
-              li.tm.nav-parent
+              li.tm.nav
                 a(href='admin')
                   i.icon-ghost
                   span Admin Panel
-                  span.fa.arrow
-                ul.children.collapse
-                  li
-                    a(href='admin') Manage Users
-                  li
-                    a(href='admin-settings') Settings
           .sidebar-widgets(style='margin-bottom: 20px;')
           .sidebar-footer.clearfix(style='')
             a.pull-left.footer-settings(href='settings', data-rel='tooltip', data-placement='top', data-original-title='Settings')
@@ -134,11 +130,12 @@ html(lang='en')
                 a(href='dashboard')
                   i.icon-bar-chart(style='padding: 1px 7px 0 0')
                   span Dashboard
-              li
-                a(href='backers')
-                  span.pull-right.badge.badge-primary(id='backersNumber' style='margin: 2px 0 0 -35px; padding: 2px 4px; font-size: 11px;')= user.backersCount
-                  i.fa.fa-search(style='padding: 3px 4px 0 0')
-                  span(style='padding-left: 5px') Backers
+              if user.status != 'Business'
+                li
+                  a(href='backers')
+                    span.pull-right.badge.badge-primary(id='backersNumber' style='margin: 2px 0 0 -35px; padding: 2px 4px; font-size: 11px;')= user.backersCount
+                    i.fa.fa-search(style='padding: 3px 4px 0 0')
+                    span(style='padding-left: 5px') Backers
               li
                 a(href='journalists')
                   span.pull-right.badge.badge-primary(id='journalistsNumber' style='margin: 2px 0 0 -35px; padding: 2px 4px; font-size: 11px;')= user.totalCount

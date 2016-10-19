@@ -22,8 +22,10 @@ $(document).ready(function(){
 	        		if(this.hasOwnProperty('status') && this['status'] != null) {
 	        			if(this['status'].toString() == 'Admin')
 	        				cell.innerHTML = '<i class="busy"></i>';
-	        			else if(this['status'].toString() == 'Active')
+	        			else if(this['status'].toString() == 'Business')
 	        				cell.innerHTML = '<i class="online"></i>';
+	        			else if(this['status'].toString() == 'Crowdfunding')
+	        				cell.innerHTML = '<i class="turquoise"></i>';
 	        			else
 	        				cell.innerHTML = '<i class="away"></i>';
 	        		}
@@ -68,7 +70,9 @@ $(document).ready(function(){
 					if(columns.eq(0).html().indexOf('busy') != -1)
 						$('#status').val('Admin');
 					else if(columns.eq(0).html().indexOf('online') != -1)
-						$('#status').val('Active');
+						$('#status').val('Business');
+					else if(columns.eq(0).html().indexOf('turquoise') != -1)
+						$('#status').val('Crowdfunding');
 					else if(columns.eq(0).html().indexOf('away') != -1)
 						$('#status').val('Inactive');
 					else

@@ -122,36 +122,6 @@ module.exports = function(app) {
 			}
 		}
 	});
-
-
-	
-	// admin settings
-	app.get('/admin-settings', function(req, res) {
-		if(req.session.user != null && req.session.user['status'] == 'Admin') {
-			res.render('admin-settings', {
-				title : 'Admin Settings',
-				countries : CT,
-				udata : req.session.user
-			});
-		}
-	});
-	
-	
-	// admin panel get users
-	app.post('/admin-settings', function(req, res) {
-		if(req.session.user != null && req.session.user['status'] == 'Admin') {
-			if(req.body['type'] == 'backers')
-				AM.updateAdminSettings( { setting:'backers', value:(req.body['backers'] == 'on' ? true : false ) }, function(e, o) {
-					if(!o)
-						res.status(400).send(e);
-					else
-						res.status(200).send(o);
-				});
-			else
-				res.status(400).send('error');
-		}
-	});
-	
 	
 	
 	// logged-in user settings page //
@@ -226,7 +196,7 @@ module.exports = function(app) {
 	
 	// logged-in user backer search //
 	app.get('/backers', function(req, res) {
-		if(req.session.user == null)
+		if(req.session.user == null || req.session.user['status'] == 'Business')
 			res.redirect('/');
 		else {
 			res.render('backers', {
@@ -240,7 +210,7 @@ module.exports = function(app) {
 		if(req.session.user == null)
 			res.redirect('/');
 		else
-			AM.returnAllBackers( { platform:req.body.platform[0], category:req.body.category[0], location:req.body['location'], backed:req.body['backed'], limit:(req.session.user['status'] == 'Admin' || req.session.user['status'] == 'Active' ? 1000 : 5)}, function(e, o){
+			AM.returnAllBackers( { platform:req.body.platform[0], category:req.body.category[0], location:req.body['location'], backed:req.body['backed'], limit:(req.session.user['status'] == 'Admin' || req.session.user['status'] == 'Crowdfunding' ? 1000 : 5)}, function(e, o){
 				if(!o)
 					res.status(400).send(e);
 				else
